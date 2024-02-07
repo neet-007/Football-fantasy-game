@@ -9,6 +9,7 @@ djangorestframework = "*"
 django-cors-headers = "*"
 requests = "*"
 bs4 = "*"
+selenium = "*"
 
 [dev-packages]
 

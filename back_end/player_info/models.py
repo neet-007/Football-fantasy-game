@@ -2,6 +2,8 @@ from django.db import models
 from user_auth.models import TeamsChoices
 # Create your models here.
 
+MIN_PLAYER_PRICE_CHANGE = 0.1
+MAX_PLAYER_PRICE_CHANGE = 0.3
 class PlayerPositions(models.IntegerChoices):
     GK = 0, 'GoalKeeper'
     DF = 1, 'Defender'
