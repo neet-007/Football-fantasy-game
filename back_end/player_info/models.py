@@ -12,6 +12,7 @@ class PlayerPositions(models.IntegerChoices):
 
 class Player(models.Model):
     first_name = models.CharField(max_length=255, null=True)
+    middle_name = models.CharField(max_length=255, null=True)
     last_name = models.CharField(max_length=255, null=True)
     nation = models.CharField(max_length=10, null=True)
     position = models.IntegerField(choices=PlayerPositions.choices)
@@ -29,11 +30,11 @@ class Player(models.Model):
     yellow_cards = models.IntegerField(default=0, null=True)
     red_cards = models.IntegerField(default=0, null=True)
     team = models.IntegerField(choices=TeamsChoices.choices)
-    price = models.DecimalField(max_digits=4, decimal_places=2, default=0)
+    price = models.DecimalField(max_digits=4, decimal_places=2, default=None, null=True)
     overall_points = models.IntegerField(default=0)
     game_week_points = models.IntegerField(default=0)
     def __str__(self) -> str:
-        return f'{self.name} {self.position}'
+        return f'{self.last_name} {self.position} {self.team}'
 
 class PlayerIjuriesAndBansStatusChoices(models.IntegerChoices):
     CHANCE_25 = 0, '25% Chance of playing'

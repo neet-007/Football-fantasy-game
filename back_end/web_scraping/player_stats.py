@@ -5,7 +5,21 @@ from player_info.models import Player
 from decimal import Decimal
 from django.db import transaction, IntegrityError
 
+import unicodedata
+import re
+
 TEAM_STATS_BASE_URL = 'https://fbref.com/'
+
+def normalize_name(name):
+    # Normalize to NFKD Unicode form to separate diacritics
+    normalized_name = unicodedata.normalize('NFKD', name)
+    # Remove any character that is not a letter, digit, or whitespace
+    normalized_name = re.sub(r'[^\w\s]', '', normalized_name)
+    # Convert to lowercase
+    normalized_name = normalized_name.lower()
+    # Remove leading and trailing whitespaces
+    normalized_name = normalized_name.strip()
+    return normalized_name
 
 def get_teams_urls():
     request = requests.get('https://fbref.com/en/comps/9/Premier-League-Stats')
@@ -39,16 +53,27 @@ def get_teams_stats(team, url):
 class PlayerStats:
     def __init__(self, data) -> None:
         self.data = data
-    
+
     @property
     def player_first_name(self):
         if 'first_name' in self.data:
-            return self.data['first_name']
+            if self.data['first_name']:
+                return normalize_name(self.data['first_name'])
+        return None
+
+    @property
+    def player_middle_name(self):
+        if 'middle_name' in self.data:
+            if self.data['middle_name']:
+                return normalize_name(self.data['middle_name'])
+        return None
 
     @property
     def player_last_name(self):
         if 'last_name' in self.data:
-            return self.data['last_name']
+            if self.data['last_name']:
+                return normalize_name(self.data['last_name'])
+        return None
 
     @property
     def player_nation(self):
@@ -209,7 +234,16 @@ class GetPlayerStats:
                 player_row = list(row)
                 split_name = player_row[0].find(name='a').text.split(' ')
                 player_dict['first_name'] = split_name[0]
-                player_dict['last_name'] = ' '.join(split_name[1:]) if len(split_name) > 1 else ''
+                player_dict['middle_name'] = split_name[1] if len(split_name) > 2 else None
+                if len(split_name) == 2:
+                    print(2)
+                    player_dict['last_name'] = (split_name[1])
+                elif len(split_name) > 2:
+                    print(3)
+                    player_dict['last_name'] = (split_name[2])
+                else:
+                    print('else')
+                    player_dict['last_name'] = None
                 try:
                     player_dict['Nation'] = player_row[1].find(name='a').find(name='span').text.split(' ')[-1]
                 except:
@@ -234,6 +268,7 @@ class GetPlayerStats:
                     with transaction.atomic():
                         Player.objects.create(
                             first_name= player_object.player_first_name,
+                            middle_name= player_object.player_middle_name,
                             last_name= player_object.player_last_name,
                             nation=player_object.player_nation,
                             age = player_object.player_age,
@@ -256,7 +291,7 @@ class GetPlayerStats:
                     raise ValueError(f'{player_dict["first_name"]} {team} {i}')
 
         except:
-            raise ValueError(f'{player_dict['first_name']} {header.text} {team} {i}')
+            raise ValueError(f'{player_dict['first_name']} {team} {i}')
 
 
     def get_player_stats(self):

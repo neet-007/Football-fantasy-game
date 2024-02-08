@@ -5,7 +5,26 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from pprint import pprint
 
+import unicodedata
+import re
+
+
 FPL_WEBSITE = 'https://fantasy.premierleague.com/player-list'
+
+def normalize_name(name):
+    if name == None:
+        return None
+    print(f'in {name}')
+    # Normalize to NFKD Unicode form to separate diacritics
+    normalized_name = unicodedata.normalize('NFKD', name)
+    # Remove any character that is not a letter, digit, or whitespace
+    normalized_name = re.sub(r'[^\w\s]', '', normalized_name)
+    # Convert to lowercase
+    normalized_name = normalized_name.lower()
+    # Remove leading and trailing whitespaces
+    normalized_name = normalized_name.strip()
+    print(f'out {normalized_name}')
+    return normalized_name
 
 def get_long_part(str:str) -> str:
     str = str.lower()
@@ -21,17 +40,18 @@ def get_long_part(str:str) -> str:
 def get_fpl_data():
     driver = webdriver.Chrome()
     driver.get(url=FPL_WEBSITE)
+    players_position_dict = {}
     try:
         sleep(30)
         containers = driver.find_elements(By.CLASS_NAME, 'Layout__Main-eg6k6r-1')
         for container in containers:
             header = container.find_element(By.TAG_NAME, 'h3').text.lower()
-            keepers_dict = {}
+
             tables = container.find_elements(By.TAG_NAME, 'tbody')
             for table in tables:
                 table_row = table.find_elements(By.TAG_NAME, 'tr')
                 for tr in table_row:
-                    keeper_dict = {}
+                    player_dict = {}
                     player_row = tr.find_elements(By.TAG_NAME, 'td')
                     for i in range(len(player_row)):
                         if i == 0:
@@ -39,81 +59,82 @@ def get_fpl_data():
                             name_length = len(name)
                             #get_long_part = lambda name_str: max(name_str.split('.'), key=lambda x: len(x)) if len(name_str.split('.')) >= 2 else None
                             if name_length == 1:
-                                keeper_dict['first_name'] = None
-                                keeper_dict['middle_name'] = None
-                                keeper_dict['last_name'] = get_long_part(name[0])
+                                player_dict['first_name'] = None
+                                player_dict['middle_name'] = None
+                                player_dict['last_name'] = normalize_name(get_long_part(name[0]))
                             if name_length == 2:
-                                keeper_dict['first_name'] = get_long_part(name[0])
-                                keeper_dict['middle_name'] = None
-                                keeper_dict['last_name'] = get_long_part(name[1])
+                                player_dict['first_name'] = normalize_name(get_long_part(name[0]))
+                                player_dict['middle_name'] = None
+                                player_dict['last_name'] = normalize_name(get_long_part(name[1]))
                             if name_length == 3:
-                                keeper_dict['first_name'] = get_long_part(name[0])
-                                keeper_dict['middle_name'] = get_long_part(name[1])
-                                keeper_dict['last_name'] = get_long_part(name[2])
+                                player_dict['first_name'] = normalize_name(get_long_part(name[0]))
+                                player_dict['middle_name'] = normalize_name(get_long_part(name[1]))
+                                player_dict['last_name'] = normalize_name(get_long_part(name[2]))
                         if i == 1:
-                            #keeper_dict['team'] = player_row[i].text.lower()
+                            #player_dict['team'] = player_row[i].text.lower()
                             if player_row[i].text.lower() == 'arsenal':
-                                keeper_dict['team'] = 0
+                                player_dict['team'] = 0
                             elif player_row[i].text.lower() == 'aston villa':
-                                keeper_dict['team'] = 1
+                                player_dict['team'] = 1
                             elif player_row[i].text.lower() == 'brentford':
-                                keeper_dict['team'] = 2
+                                player_dict['team'] = 2
                             elif player_row[i].text.lower() == 'brighton':
-                                keeper_dict['team'] = 3
+                                player_dict['team'] = 3
                             elif player_row[i].text.lower() == 'bournemouth':
-                                keeper_dict['team'] = 4
+                                player_dict['team'] = 4
                             elif player_row[i].text.lower() == 'burnley':
-                                keeper_dict['team'] = 5
+                                player_dict['team'] = 5
                             elif player_row[i].text.lower() == 'chelsea':
-                                keeper_dict['team'] = 6
+                                player_dict['team'] = 6
                             elif player_row[i].text.lower() == 'crystal palace':
-                                keeper_dict['team'] = 7
+                                player_dict['team'] = 7
                             elif player_row[i].text.lower() == 'everton':
-                                keeper_dict['team'] = 8
+                                player_dict['team'] = 8
                             elif player_row[i].text.lower() == 'fulham':
-                                keeper_dict['team'] = 9
+                                player_dict['team'] = 9
                             elif player_row[i].text.lower() == 'liverpool':
-                                keeper_dict['team'] = 10
+                                player_dict['team'] = 10
                             elif player_row[i].text.lower() == 'luton':
-                                keeper_dict['team'] = 11
+                                player_dict['team'] = 11
                             elif player_row[i].text.lower() == 'man city':
-                                keeper_dict['team'] = 12
+                                player_dict['team'] = 12
                             elif player_row[i].text.lower() == 'man utd':
-                                keeper_dict['team'] = 13
+                                player_dict['team'] = 13
                             elif player_row[i].text.lower() == 'newcastle':
-                                keeper_dict['team'] = 14
+                                player_dict['team'] = 14
                             elif player_row[i].text.lower() == "nott'm forest":
-                                keeper_dict['team'] = 15
+                                player_dict['team'] = 15
                             elif player_row[i].text.lower() == 'sheffield utd':
-                                keeper_dict['team'] = 16
+                                player_dict['team'] = 16
                             elif player_row[i].text.lower() == 'spurs':
-                                keeper_dict['team'] = 17
+                                player_dict['team'] = 17
                             elif player_row[i].text.lower() == 'west ham':
-                                keeper_dict['team'] = 18
+                                player_dict['team'] = 18
                             elif player_row[i].text.lower() == 'wolves':
-                                keeper_dict['team'] = 19
+                                player_dict['team'] = 19
                             else:
                                 raise ValueError(f'{player_row[i].text.lower()} is not registerd')
                         if i == 2:
                             continue
-                        keeper_dict['price'] = player_row[i].text.replace('£','').lower()
+                        player_dict['price'] = player_row[i].text.replace('£','').lower()
                         if header == 'goalkeepers':
-                            keeper_dict['pos'] = 0
+                            player_dict['pos'] = 0
                         elif header == 'defenders':
-                            keeper_dict['pos'] = 1
+                            player_dict['pos'] = 1
                         elif header == 'midfielders':
-                            keeper_dict['pos'] = 3
+                            player_dict['pos'] = 3
                         elif header == 'forwards':
-                            keeper_dict['pos'] = 4
+                            player_dict['pos'] = 4
                         else:
                             raise ValueError('position is not registerd')
-                    keepers_dict[player_row[0].text.lower()] = keeper_dict
-                pprint(keepers_dict)
-                print(sorted(set(d['team'] for d in keepers_dict.values())))
+                    players_position_dict[player_dict['last_name']] = player_dict
+        #pprint(players_position_dict)
+        #print(sorted(set(d['team'] for d in players_position_dict.values())))
         #header = driver.find_element(By.CLASS_NAME, 'Layout__Main-eg6k6r-1').find_element(By.TAG_NAME, 'h3')
         #print(header.text)
     finally:
         driver.quit()
+        return players_position_dict
     """
     request = requests.get(url=FPL_WEBSITE)
     soup = BeautifulSoup(request.content, 'html.parser')
