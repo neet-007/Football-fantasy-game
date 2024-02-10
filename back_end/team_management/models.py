@@ -68,7 +68,7 @@ class GameWeekTeamPlayerBenchedOrderChoices(models.IntegerChoices):
     THIRD_CHOICE = 3, 'Third Choice'
 
 class GameWeekPlayer(models.Model):
-    player = models.OneToOneField(Player, on_delete=models.CASCADE)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
     game_week_team = models.OneToOneField(GameWeekTeam, on_delete=models.CASCADE)
     starter = models.BooleanField(default=False, db_index=True)
     benched_order = models.IntegerField(default=None, null=True, choices=GameWeekTeamPlayerBenchedOrderChoices.choices)
@@ -112,3 +112,4 @@ def validate_players_in_team(sender, **kwargs):
 
 m2m_changed.connect(validate_players_in_team, sender=Team.starting_players.through)
 """
+

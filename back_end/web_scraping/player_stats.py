@@ -111,11 +111,13 @@ class PlayerStats:
     def player_minutes_played(self):
         if 'Min' in self.data:
             return self.data['Min']
+        return 0
 
     @property
     def player_90s(self):
         if '90s' in self.data:
             return self.data['90s']
+        return 0
 
     @property
     def player_goals(self):
@@ -124,41 +126,61 @@ class PlayerStats:
                 return self.data['Gls']
             except Exception as e:
                 raise ValueError(f'{self.data['first_name']}')
+        return 0
 
     @property
     def player_assists(self):
         if 'Ast' in self.data:
             return self.data['Ast']
+        return 0
 
     @property
     def player_goals_and_assists(self):
         if 'G+A' in self.data:
             return self.data['G+A']
+        return 0
 
     @property
     def player_non_penalty_goals(self):
         if 'G-PK' in self.data:
             return self.data['G-PK']
+        return 0
 
     @property
     def player_penalty_goals(self):
         if 'PK' in self.data:
             return self.data['PK']
+        return 0
 
     @property
     def player_penalties_attempted(self):
         if 'PKatt' in self.data:
             return self.data['PKatt']
+        return 0
 
     @property
     def player_yellow_cards(self):
         if 'CrdY' in self.data:
             return self.data['CrdY']
+        return 0
 
     @property
     def player_red_cards(self):
         if 'CrdR' in self.data:
             return self.data['CrdR']
+        return 0
+
+    @property
+    def player_saves(self):
+        if 'Saves' in self.data:
+            return self.data['Saves']
+        return 0
+
+    @property
+    def player_clean_sheets(self):
+        if 'CS' in self.data:
+            return self.data['CS']
+        return 0
 
     @property
     def player_team(self):
@@ -225,8 +247,10 @@ class GetPlayerStats:
     def get_teams_players_stats(self, team, url, i):
         request = requests.get(url)
         soup = BeautifulSoup(request.content, 'html.parser')
-        player_headers =  soup.find(attrs={'id':'stats_standard_9'}).findAll(name='tr')[1].findAll('th')
+        player_headers = soup.find(attrs={'id':'stats_standard_9'}).findAll(name='tr')[1].findAll('th')
         player_rows = soup.find(attrs={'id':'stats_standard_9'}).find(name='tbody').findAll(name='tr')
+        keeper_headers = list(soup.find(attrs={'id':'stats_keeper_9'}).findAll(name='tr')[1].findAll(name='th'))
+        keepers_rows = soup.find(attrs={'id':'stats_keeper_9'}).find(name='tbody').findAll(name='tr')
 
         try:
             for row in player_rows:
@@ -262,6 +286,26 @@ class GetPlayerStats:
                         player_dict[header.text] = int(td.text.replace(',', ''))
                     else:
                         player_dict[header.text] =  int(td.text)
+
+                if player_dict['Pos'] == 'GK':
+                    for row in keepers_rows:
+                        keeper_row = list(row)
+                        keeper_dict = {}
+                        split_name = player_row[0].find(name='a').text.split(' ')
+                        keeper_dict['first_name'] = split_name[0]
+                        keeper_dict['middle_name'] = split_name[1] if len(split_name) > 2 else None
+                        if len(split_name) == 2:
+                            print(2)
+                            keeper_dict['last_name'] = (split_name[1])
+                        elif len(split_name) > 2:
+                            print(3)
+                            keeper_dict['last_name'] = (split_name[2])
+                        else:
+                            print('else')
+                            keeper_dict['last_name'] = None
+                        if keeper_dict['first_name'] == player_dict['first_name'] and keeper_dict['middle_name'] == player_dict['middle_name'] and keeper_dict['last_name'] == player_dict['last_name']:
+                            player_dict[keeper_headers[11].text] = keeper_row[11]
+                            player_dict[keeper_headers[15].text] = keeper_row[15]
 
                 player_object = PlayerStats(data=player_dict)
                 try:
