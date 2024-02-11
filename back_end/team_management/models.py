@@ -69,7 +69,7 @@ class GameWeekTeamPlayerBenchedOrderChoices(models.IntegerChoices):
 
 class GameWeekPlayer(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
-    game_week_team = models.OneToOneField(GameWeekTeam, on_delete=models.CASCADE)
+    game_week_team = models.ForeignKey(GameWeekTeam, on_delete=models.CASCADE)
     starter = models.BooleanField(default=False, db_index=True)
     benched_order = models.IntegerField(default=None, null=True, choices=GameWeekTeamPlayerBenchedOrderChoices.choices)
     points = models.IntegerField(default=0, db_index=True)

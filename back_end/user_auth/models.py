@@ -34,6 +34,7 @@ class UserModel(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return self.email
@@ -59,10 +60,3 @@ class TeamsChoices(models.IntegerChoices):
     TOTTENHAM_HOTSPUR = 17, 'Tottenham Hotspur'
     WESTHAM_UNITED = 18, 'Westham United'
     WOLVERHAMPTON_WANDERERS = 19, 'Wolverhamption Wanderers'
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=125, blank=True)
-    last_name = models.CharField(max_length=125, blank=True)
-    favorite_team = models.IntegerField(choices=TeamsChoices.choices, blank=True)
-    cash = models.DecimalField(max_digits=6, decimal_places=2, default=0)
