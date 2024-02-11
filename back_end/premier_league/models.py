@@ -24,6 +24,9 @@ class PremierLeagueTeam(models.Model):
     expected_goals_differance_per_ninety = models.FloatField(default=0)
     last_five = models.CharField(max_length=10)
 
+    class Meta:
+        ordering = ['postition']
+
     def save(self, *args, **kwargs) -> None:
         if self.matches_played != self.wins + self.draws + self.losses:
             raise ValidationError('wins + losses + draws must equal games played')

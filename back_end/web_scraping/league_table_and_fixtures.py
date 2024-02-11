@@ -12,7 +12,7 @@ class PremierLeagueTeam():
 
     @property
     def name(self):
-        return self.data['Squad'].lower()
+        return self.data['Squad'].lower().strip()
 
     @property
     def team_code(self):
@@ -235,7 +235,7 @@ class TeamFixture():
     def opponent(self):
         return self.get_team_int(self.data['opponent'].lower())
 
-def get_league_table():
+def get_league_table() -> list:
     request = requests.get(LEAGUE_TABLE)
     soup = BeautifulSoup(request.content, 'html.parser')
 
@@ -254,11 +254,29 @@ def get_league_table():
 
         teams_list.append(PremierLeagueTeam(data=team_dict))
 
-    for item in teams_list:
-        print(item.name)
-        print(item.team_code)
-        print(item.last_five)
-        print(item.points)
+    return teams_list
+
+def update_league_table() -> dict:
+    request = requests.get(LEAGUE_TABLE)
+    soup = BeautifulSoup(request.content, 'html.parser')
+
+    league_header = list(soup.find(name='table').find(name='thead').find(name='tr').findAll(name='th'))[:16]
+    league_rows = list(soup.find(name='table').find(name='tbody').findAll(name='tr'))
+
+    teams_dict = {}
+    for i in range(len(league_rows)):
+        team_dict = {}
+        for j in range(len(league_header)):
+            if j == 15:
+                games = list(league_rows[i])[j].find(name='div').findAll(name='div')
+                team_dict[league_header[j].text] = [div.find(name='a').text for div in games]
+                continue
+            team_dict[league_header[j].text] = list(league_rows[i])[j].text
+
+        pl_obj = PremierLeagueTeam(data=team_dict)
+        teams_dict[pl_obj.team_code] = pl_obj
+
+    return teams_dict
 
 def get_teams_fixtures() -> list:
     try:
@@ -290,6 +308,40 @@ def get_teams_fixtures() -> list:
                 teams_fixtures_list.append(TeamFixture(data=fixture_dict))
 
         return teams_fixtures_list
+    except Exception as e:
+        print(e)
+
+def update_teams_fixtures() -> dict:
+    try:
+        teams_urls = get_teams_urls()
+        teams_fixtures_dict = {}
+        for team, url in teams_urls.items():
+            request = requests.get(url=url)
+            request.raise_for_status()
+            soup = BeautifulSoup(request.content, 'html.parser')
+            fixtures_table = list(soup.find(attrs={'id':'matchlogs_for'}).find(name='tbody').findAll(name='tr'))
+
+            for tr in fixtures_table:
+                fixture_dict = {}
+                tr_list = list(tr.findAll(name='td'))[1:9]
+                if tr_list[0].text.lower() != 'premier league':
+                    continue
+
+                fixture_dict['team'] = team
+                fixture_dict['date'] = tr.find(name='th').text
+                fixture_dict['comp'] = tr_list[0].text
+                fixture_dict['game_week'] = tr_list[1].text
+                fixture_dict['day'] = tr_list[2].text
+                fixture_dict['ground'] = tr_list[3].text
+                fixture_dict['result'] = tr_list[4].text
+                fixture_dict['gf'] = tr_list[5].text
+                fixture_dict['ga'] = tr_list[6].text
+                fixture_dict['opponent'] = tr_list[7].text
+
+                team_fixtures_obj = TeamFixture(data=fixture_dict)
+                teams_fixtures_dict[f'{team_fixtures_obj.team}-{team_fixtures_obj.game_week}'] = team_fixtures_obj
+
+        return teams_fixtures_dict
     except Exception as e:
         print(e)
 #matchlogs_for
