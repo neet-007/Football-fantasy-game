@@ -93,6 +93,8 @@ class PlayerPricing():
             soup = BeautifulSoup(request.content, 'html.parser')
             player_headers =  soup.find(attrs={'id':'stats_standard_9'}).findAll(name='tr')[1].findAll('th')
             player_rows = soup.find(attrs={'id':'stats_standard_9'}).find(name='tbody').findAll(name='tr')
+            keeper_headers = list(soup.find(attrs={'id':'stats_keeper_9'}).findAll(name='tr')[1].findAll(name='th'))
+            keepers_rows = soup.find(attrs={'id':'stats_keeper_9'}).find(name='tbody').findAll(name='tr')
 
             try:
                 for row in player_rows:
@@ -126,6 +128,26 @@ class PlayerPricing():
                         else:
                             player_dict[header.text] =  int(td.text)
 
+                    if player_dict['Pos'] == 'GK':
+                        print(f'gk found {player_dict['first_name']} {player_dict["last_name"]}')
+                        for row in keepers_rows:
+                            keeper_row = list(row)
+                            keeper_dict = {}
+                            split_name = keeper_row[0].find(name='a').text.split(' ')
+                            keeper_dict['first_name'] = split_name[0]
+                            keeper_dict['middle_name'] = split_name[1] if len(split_name) > 2 else None
+                            if len(split_name) == 2:
+                                keeper_dict['last_name'] = (split_name[1])
+                            elif len(split_name) > 2:
+                                keeper_dict['last_name'] = (split_name[2])
+                            else:
+                                keeper_dict['last_name'] = None
+                            if keeper_dict['first_name'] == player_dict['first_name'] and keeper_dict['middle_name'] == player_dict['middle_name'] and keeper_dict['last_name'] == player_dict['last_name']:
+                                print(f'gk match {player_dict["first_name"]} {player_dict["last_name"]}')
+                                player_dict[keeper_headers[11].text] = keeper_row[11].text
+                                player_dict[keeper_headers[16].text] = keeper_row[16].text
+                                player_dict[keeper_headers[19].text] = keeper_row[19].text
+
                     players_dict[f'{player_dict['last_name']} {player_dict['Team']} {player_dict['first_name']}'] = player_dict
 
             except Exception as e:
@@ -135,14 +157,29 @@ class PlayerPricing():
         return players_dict
 
     def player_update_and_pricing(self) -> None:
-        players = Player.objects.all()
+        players = Player.objects.all().order_by('team')
         new_data_dict = self.get_teams_stats()
         player_to_update_list = []
         try:
             with transaction.atomic():
+                clean_sheet = False
                 for player in players:
                     game_week_points = 0
                     new_data_player = new_data_dict[f'{player.last_name} {player.team} {player.first_name}']
+
+                    if player.position == 0:
+                        clean_sheet = False
+                        if new_data_player['CS'] > player.clean_sheets:
+                            clean_sheet = True
+
+                        game_week_points += (new_data_player['Saves'] - player.saves) / 3
+
+                    if clean_sheet and new_data_player['MP'] - player.matches_played > 60:
+                        if player.position == 0 or player.position == 1:
+                            game_week_points += 4
+                        if player.position == 3:
+                            game_week_points += 1
+
                     if new_data_player['Min']:
                         game_week_points += 1 if new_data_player['Min'] - player.minutes == 59 else 0
                         game_week_points += 2 if new_data_player['Min'] - player.minutes >=60 else 0

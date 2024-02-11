@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'league_management',
     'player_info',
     'rest_framework',
+    'premier_league'
 ]
 
 MIDDLEWARE = [
