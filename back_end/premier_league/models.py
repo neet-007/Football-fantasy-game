@@ -1,22 +1,50 @@
 from typing import Iterable
 from django.db import models
-from player_info.models import TeamsChoices
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 # Create your models here.
 
-class PremierLeagueTeam(models.Model):
+class TeamsChoices(models.IntegerChoices):
+    ARSENAL = 0, 'Arsenal'
+    ASTON_VILLA = 1, 'Aston Villa'
+    BRENTFORD = 2, 'Brentford'
+    BRIGHTON = 3, 'Brighton'
+    BOURNEMOUTH = 4, 'Bournemouth'
+    BURNLEY = 5, 'Burnley'
+    CHELSEA = 6, 'Chelsea'
+    CRYSTAL_PALACE = 7, 'Crystal Palace'
+    EVERTON = 8, 'Everton'
+    FULHAM = 9, 'Fulham'
+    LIVERPOOL = 10, 'Liverpool'
+    LUTON_TOWN = 11, 'Luton Town'
+    MANCHESTER_CITY = 12, 'Manchester City'
+    MANCHESTER_UNITED = 13, 'Manchester United'
+    NEWCASTLE_UNITED = 14, 'Newcastle United'
+    NOTTINGHAM_FOREST = 15, 'Nottingham Forset'
+    SHEFFIELD_UNITED = 16, 'Sheffield United'
+    TOTTENHAM_HOTSPUR = 17, 'Tottenham Hotspur'
+    WESTHAM_UNITED = 18, 'Westham United'
+    WOLVERHAMPTON_WANDERERS = 19, 'Wolverhamption Wanderers'
+
+class PremierLeagueTeamBase(models.Model):
     name = models.CharField(max_length=40)
-    team_code = models.PositiveIntegerField(choices=TeamsChoices.choices)
+    team_code = models.PositiveIntegerField(choices=TeamsChoices.choices, db_index=True)
+    img = models.ImageField(blank=True, null=True)
+
+    def __str__(self) -> str:
+        return f'{self.name}'
+
+class PremierLeagueTeam(models.Model):
+    base_team = models.ForeignKey(PremierLeagueTeamBase, on_delete=models.CASCADE)
     postition = models.PositiveIntegerField(unique=True, validators=[MinValueValidator(1), MaxValueValidator(20)])
     matches_played = models.PositiveIntegerField(validators=[MaxValueValidator(38)])
-    wins = models.PositiveIntegerField(validators=[MaxValueValidator(38)], default=0)
-    losses = models.PositiveIntegerField(validators=[MaxValueValidator(38)], default=0)
-    draws = models.PositiveIntegerField(validators=[MaxValueValidator(38)], default=0)
+    wins = models.PositiveIntegerField(validators=[MaxValueValidator(38)], default=0, db_index=True)
+    losses = models.PositiveIntegerField(validators=[MaxValueValidator(38)], default=0, db_index=True)
+    draws = models.PositiveIntegerField(validators=[MaxValueValidator(38)], default=0, db_index=True)
     goals_for = models.PositiveIntegerField(default=0)
     goals_against = models.PositiveIntegerField(default=0)
     goals_differance = models.IntegerField(default=0)
-    points = models.PositiveIntegerField(validators=[MaxValueValidator(114)], default=0)
+    points = models.PositiveIntegerField(validators=[MaxValueValidator(114)], default=0, db_index=True)
     points_per_match = models.FloatField(default=0)
     expected_goals_for = models.FloatField(default=0)
     expected_goals_against = models.FloatField(default=0)
@@ -26,6 +54,9 @@ class PremierLeagueTeam(models.Model):
 
     class Meta:
         ordering = ['postition']
+
+    def __str__(self) -> str:
+        return f'{self.team_base.name}-{self.team_base.team_code}'
 
     def save(self, *args, **kwargs) -> None:
         if self.matches_played != self.wins + self.draws + self.losses:
@@ -93,16 +124,16 @@ class ResultChoices(models.IntegerChoices):
     DRAW = 2, 'Draw'
 
 class TeamFixtures(models.Model):
-    team = models.PositiveIntegerField(choices=TeamsChoices.choices)
+    team = models.ForeignKey(PremierLeagueTeamBase, on_delete=models.CASCADE, related_name='team_fixtures_team')
     date = models.DateField()
     comp = models.PositiveIntegerField()
-    game_week = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(38)])
-    day = models.PositiveIntegerField(choices=DayChoices.choices)
-    ground = models.PositiveIntegerField(choices=GroundChoices.choices)
+    game_week = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(38)], db_index=True)
+    day = models.PositiveIntegerField(choices=DayChoices.choices, db_index=True)
+    ground = models.PositiveIntegerField(choices=GroundChoices.choices, db_index=True)
     result = models.PositiveIntegerField(choices=ResultChoices.choices, null=True)
     goals_for = models.PositiveIntegerField(default=None, null=True)
     goals_against = models.PositiveIntegerField(default=None, null=True)
-    opponent = models.PositiveIntegerField(choices=TeamsChoices.choices)
+    opponent = models.ForeignKey(PremierLeagueTeamBase, on_delete=models.CASCADE, related_name='team_fixtures_opponent')
 
     def save(self, *args, **kwargs) -> None:
         if self.team == self.opponent:

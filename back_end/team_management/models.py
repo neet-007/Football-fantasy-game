@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db.models.signals import m2m_changed
 from django.core.validators import MinValueValidator, MaxValueValidator
 from player_info.models import Player, PlayerPositions
+from premier_league.models import PremierLeagueTeamBase
 # Create your models here.
 GAMEWEEK = 1
 
@@ -14,6 +15,7 @@ user_model = get_user_model()
 
 class Team(models.Model):
     user = models.ForeignKey(user_model, on_delete=models.CASCADE)
+    favorite_team = models.ForeignKey(PremierLeagueTeamBase, on_delete=models.PROTECT)
     overall_points = models.IntegerField(default=0, db_index=True)
     overall_rank = models.IntegerField(default=0, db_index=True)
     free_transfers = models.IntegerField(default=0)
@@ -64,29 +66,6 @@ class GameWeekTeam(models.Model):
 
     objects = GameWeekTeamManager()
 
-    """
-    def save(self, *args, **kwargs) -> None:
-        starting_players = self.gameweekplayer.filter(starter=True)
-        benched_players = self.gameweekplayer.filter(starter=False)
-        if len(starting_players) != 11:
-            raise ValidationError('team must have 11 starting players')
-        if len(benched_players) != 4:
-            raise ValidationError('benched players must be 4')
-        if starting_players.filter(pk__in=benched_players.values_list('pk', flat=True)).exists():
-            raise ValidationError('cant have the same players starting and benched')
-        if benched_players.filter(position=PlayerPositions.GK).count() != self.starting_players_gk_min:
-            raise ValidationError('team can only have one benched goalkeeper')
-        if starting_players.filter(position=PlayerPositions.GK).count() != self.starting_players_gk_min:
-            raise ValidationError(f'team can only have {self.starting_players_gk_min} starting goalkeeper')
-        if not (self.starting_players_df_min <= starting_players.filter(position=PlayerPositions.DF).count() <= self.starting_players_df_max):
-            raise ValidationError(f'team defenders must be between {self.starting_players_df_min} and {self.starting_players_df_max} inclusive')
-        if not (self.starting_players_mf_min <= starting_players.filter(position=PlayerPositions.MF).count() <= self.starting_players_mf_max):
-            raise ValidationError(f'team midfielders must be between {self.starting_players_mf_min} and {self.starting_players_mf_max} inclusive')
-        if not (self.starting_players_st_min <= starting_players.filter(position=PlayerPositions.ST).count() <= self.starting_players_st_max):
-            raise ValidationError(f'team strikers must be between {self.starting_players_st_min} and {self.starting_players_st_max} inclusive')
-        self.points = sum(player.points for player in self.gameweekplayer.all())
-        return super().save(*args, **kwargs)
-        """
 class GameWeekTeamPlayerBenchedOrderChoices(models.IntegerChoices):
     GK = 0, 'Goolkeeper Bench'
     FIRST_CHOICE = 1, 'First Choice'
@@ -115,28 +94,4 @@ class PlayerTransfer(models.Model):
             self.points_cost = 4
         return super().save(*args, **kwargs)
 
-"""
-def validate_players_in_team(sender, **kwargs):
-    team_instance = kwargs['instance']
-    starting_players = team_instance.starting_players.all()
-    benched_players = team_instance.benched_players.all()
-    if len(starting_players) != 11:
-        raise ValidationError('starting players must be 11')
-    if len(benched_players) != 5:
-        raise ValidationError('benched players must be 5')
-    if starting_players.filter(pk__in=benched_players.values_list('pk', flat=True)).exists():
-        raise ValidationError('cant have the same players starting and benched')
-    if benched_players.filter(position=PlayerPositions.GK).count() != team_instance.starting_players_gk_min:
-        raise ValidationError('team can only have one benched goalkeeper')
-    if starting_players.filter(position=PlayerPositions.GK).count() != team_instance.starting_players_gk_min:
-        raise ValidationError(f'team can only have {team_instance.starting_players_gk_min} starting goalkeeper')
-    if not (team_instance.starting_players_df_min <= starting_players.filter(position=PlayerPositions.DF).count() <= team_instance.starting_players_df_max):
-        raise ValidationError(f'team defenders must be between {team_instance.starting_players_df_min} and {team_instance.starting_players_df_max} inclusive')
-    if not (team_instance.starting_players_mf_min <= starting_players.filter(position=PlayerPositions.MF).count() <= team_instance.starting_players_mf_max):
-        raise ValidationError(f'team midfielders must be between {team_instance.starting_players_mf_min} and {team_instance.starting_players_mf_max} inclusive')
-    if not (team_instance.starting_players_st_min <= starting_players.filter(position=PlayerPositions.ST).count() <= team_instance.starting_players_st_max):
-        raise ValidationError(f'team strikers must be between {team_instance.starting_players_st_min} and {team_instance.starting_players_st_max} inclusive')
-
-m2m_changed.connect(validate_players_in_team, sender=Team.starting_players.through)
-"""
 

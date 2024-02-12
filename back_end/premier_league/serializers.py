@@ -1,7 +1,13 @@
-from .models import PremierLeagueTeam, TeamFixtures
+from .models import PremierLeagueTeamBase, PremierLeagueTeam, TeamFixtures
 from rest_framework.serializers import ModelSerializer, ValidationError
 
+class PremierLeagueTeamBaseSerializer(ModelSerializer):
+    class Meta:
+        model = PremierLeagueTeamBase
+        fields = '__all__'
+
 class PremierLeagueTeamSerializer(ModelSerializer):
+    team = PremierLeagueTeamBaseSerializer(required=False, read_only=True)
     class Meta:
         model = PremierLeagueTeam
         fields = '__all__'
@@ -26,6 +32,8 @@ class PremierLeagueTeamSerializer(ModelSerializer):
         }
 
 class TeamFixturesSerializer(ModelSerializer):
+    team = PremierLeagueTeamBaseSerializer()
+    opponent = PremierLeagueTeamBaseSerializer()
     class Meta:
         model = TeamFixtures
         fields = '__all__'
