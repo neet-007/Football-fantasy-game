@@ -1,4 +1,5 @@
 from collections.abc import Iterable
+from typing import Any
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -6,6 +7,8 @@ from django.db.models.signals import m2m_changed
 from django.core.validators import MinValueValidator, MaxValueValidator
 from player_info.models import Player, PlayerPositions
 # Create your models here.
+GAMEWEEK = 1
+
 user_model = get_user_model()
 
 
@@ -22,23 +25,46 @@ class Team(models.Model):
     triple_captin = models.BooleanField(default=True)
     wild_card = models.BooleanField(default=True)
 
+    """
     def save(self, *args, **kwargs) -> None:
-        self.team_value = sum(player.price for player in self.gameweekteam.gameweekplayer.all())
+        self.team_value = sum(player.price for player in self.game_week_team_team.game_week_player_game_week_team.all())
         return super().save(*args, **kwargs)
+    """
+
+class GameWeekTeamManager(models.Manager):
+    def create(self, team_pk:int, starters:list[int], bench_order:dict[int, int]):
+        team = Team.objects.filter(pk=team_pk)
+
+        if not team:
+            raise ValidationError('team doesnt exist')
+
+        if len(starters) != 11 and len(bench_order) != 4:
+            raise ValidationError('startes must be 11 and benched players must be 4')
+
+        game_week_team = GameWeekTeam(team=team[0], game_week=GAMEWEEK)
+        game_week_team.save()
+        players_starters = Player.objects.filter(pk__in=starters)
+        players_benched = Player.objects.filter(pk__in=bench_order.keys())
+        if sum(player.position == PlayerPositions.GK for player in players_starters) + sum(player.position == PlayerPositions.GK for player in players_benched) != 2 and sum(player.position == PlayerPositions.DF for player in players_starters) + sum(player.position == PlayerPositions.DF for player in players_benched) != 5 and sum(player.position == PlayerPositions.MF for player in players_starters) + sum(player.position == PlayerPositions.MF for player in players_benched) != 5 and sum(player.position == PlayerPositions.ST for player in players_starters) + sum(player.position == PlayerPositions.ST for player in players_benched) != 3:
+            raise ValidationError('players structure is as follows: 2 goalkeepers, 5 defenders, 5 midfielders, 3 strikers')
+
+        players_objectes = [GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=True) for player in players_starters]
+        for pk, order in bench_order.items():
+            player = players_benched.filter(pk=pk)[0]
+            players_objectes.append(GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=False, benched_order=order))
+
+        GameWeekPlayer.objects.bulk_create(players_objectes)
+
+        return game_week_team
 
 class GameWeekTeam(models.Model):
-    starting_players_gk_min = 1
-    starting_players_df_min = 3
-    starting_players_df_max = 5
-    starting_players_mf_min = 3
-    starting_players_mf_max = 5
-    starting_players_st_min = 1
-    starting_players_st_max = 3
-
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    points = models.IntegerField(default=0, db_index=True)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='game_week_team_team')
+    points = models.IntegerField(default=0, db_index=True, blank=True)
     game_week = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(38)], db_index=True)
 
+    objects = GameWeekTeamManager()
+
+    """
     def save(self, *args, **kwargs) -> None:
         starting_players = self.gameweekplayer.filter(starter=True)
         benched_players = self.gameweekplayer.filter(starter=False)
@@ -60,7 +86,7 @@ class GameWeekTeam(models.Model):
             raise ValidationError(f'team strikers must be between {self.starting_players_st_min} and {self.starting_players_st_max} inclusive')
         self.points = sum(player.points for player in self.gameweekplayer.all())
         return super().save(*args, **kwargs)
-
+        """
 class GameWeekTeamPlayerBenchedOrderChoices(models.IntegerChoices):
     GK = 0, 'Goolkeeper Bench'
     FIRST_CHOICE = 1, 'First Choice'
@@ -69,10 +95,11 @@ class GameWeekTeamPlayerBenchedOrderChoices(models.IntegerChoices):
 
 class GameWeekPlayer(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
-    game_week_team = models.ForeignKey(GameWeekTeam, on_delete=models.CASCADE)
+    game_week_team = models.ForeignKey(GameWeekTeam, on_delete=models.CASCADE, related_name='game_week_player_game_week_team')
+    position = models.IntegerField(choices=PlayerPositions.choices)
     starter = models.BooleanField(default=False, db_index=True)
-    benched_order = models.IntegerField(default=None, null=True, choices=GameWeekTeamPlayerBenchedOrderChoices.choices)
-    points = models.IntegerField(default=0, db_index=True)
+    benched_order = models.IntegerField(default=None, null=True, choices=GameWeekTeamPlayerBenchedOrderChoices.choices, blank=True)
+    points = models.IntegerField(default=0, db_index=True, blank=True)
 
 class PlayerTransfer(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
