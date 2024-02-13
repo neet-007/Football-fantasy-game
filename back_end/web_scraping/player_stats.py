@@ -5,21 +5,8 @@ from player_info.models import Player
 from decimal import Decimal
 from django.db import transaction, IntegrityError
 
-import unicodedata
-import re
-
+from utils.player_info_utils import normalize_player_name
 TEAM_STATS_BASE_URL = 'https://fbref.com/'
-
-def normalize_name(name):
-    # Normalize to NFKD Unicode form to separate diacritics
-    normalized_name = unicodedata.normalize('NFKD', name)
-    # Remove any character that is not a letter, digit, or whitespace
-    normalized_name = re.sub(r'[^\w\s]', '', normalized_name)
-    # Convert to lowercase
-    normalized_name = normalized_name.lower()
-    # Remove leading and trailing whitespaces
-    normalized_name = normalized_name.strip()
-    return normalized_name
 
 def get_teams_urls():
     try:
@@ -62,21 +49,21 @@ class PlayerStats:
     def player_first_name(self):
         if 'first_name' in self.data:
             if self.data['first_name']:
-                return normalize_name(self.data['first_name'])
+                return normalize_player_name(self.data['first_name'])
         return None
 
     @property
     def player_middle_name(self):
         if 'middle_name' in self.data:
             if self.data['middle_name']:
-                return normalize_name(self.data['middle_name'])
+                return normalize_player_name(self.data['middle_name'])
         return None
 
     @property
     def player_last_name(self):
         if 'last_name' in self.data:
             if self.data['last_name']:
-                return normalize_name(self.data['last_name'])
+                return normalize_player_name(self.data['last_name'])
         return None
 
     @property

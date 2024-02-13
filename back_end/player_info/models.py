@@ -12,7 +12,6 @@ class PlayerPositions(models.IntegerChoices):
 
 class Player(models.Model):
     first_name = models.CharField(max_length=255, null=True)
-    middle_name = models.CharField(max_length=255, null=True)
     last_name = models.CharField(max_length=255, null=True)
     nation = models.CharField(max_length=10, null=True)
     position = models.IntegerField(choices=PlayerPositions.choices, db_index=True)
