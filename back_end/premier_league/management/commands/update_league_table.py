@@ -13,11 +13,10 @@ class Command(BaseCommand):
                 teams_new_data = update_league_table()
                 teams = PremierLeagueTeam.objects.all()
                 teams_to_update = []
-                fields_to_update = ['name', 'team_code', 'postition', 'matches_played', 'wins', 'losses', 'draws', 'goals_for', 'goals_against', 'goals_differance', 'points', 'points_per_match', 'expected_goals_for', 'expected_goals_against', 'expected_goals_differance', 'expected_goals_differance_per_ninety', 'last_five']
+                fields_to_update = ['postition', 'matches_played', 'wins', 'losses', 'draws', 'goals_for', 'goals_against', 'goals_differance', 'points', 'points_per_match', 'expected_goals_for', 'expected_goals_against', 'expected_goals_differance', 'expected_goals_differance_per_ninety', 'last_five']
                 for team in teams:
-                    team_new_data = teams_new_data[team.team_code]
-                    team.name = team_new_data.name
-                    team.team_code = team_new_data.team_code
+                    team_new_data = teams_new_data[team.base_team.pk]
+
                     team.postition = team_new_data.position
                     team.matches_played = team_new_data.matches_played
                     team.wins = team_new_data.wins
@@ -38,4 +37,4 @@ class Command(BaseCommand):
 
                 PremierLeagueTeam.objects.bulk_update(teams_to_update, fields_to_update)
         except Exception as e:
-            print(e.with_traceback(e.__traceback__))
+            print(e)

@@ -10,6 +10,7 @@ django-cors-headers = "*"
 requests = "*"
 bs4 = "*"
 selenium = "*"
+pillow = "*"
 
 [dev-packages]
 

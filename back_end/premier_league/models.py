@@ -28,7 +28,7 @@ class TeamsChoices(models.IntegerChoices):
 
 class PremierLeagueTeamBase(models.Model):
     name = models.CharField(max_length=40)
-    team_code = models.PositiveIntegerField(choices=TeamsChoices.choices, db_index=True)
+    team_code = models.PositiveIntegerField(choices=TeamsChoices.choices, db_index=True, primary_key=True)
     img = models.ImageField(blank=True, null=True)
 
     def __str__(self) -> str:
