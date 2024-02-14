@@ -1,11 +1,9 @@
 import requests
 import pprint
 from bs4 import BeautifulSoup
-from player_info.models import Player
 from decimal import Decimal
-from django.db import transaction, IntegrityError
 
-from utils.player_info_utils import normalize_player_name
+from utils.player_info_utils import split_name
 TEAM_STATS_BASE_URL = 'https://fbref.com/'
 
 def get_teams_urls():
@@ -20,7 +18,7 @@ def get_teams_urls():
         return teams_urls
     except Exception as e:
         print(e)
-
+#DELETE
 def get_teams_stats(team, url):
     request = requests.get(url)
     soup = BeautifulSoup(request.content, 'html.parser')
@@ -48,28 +46,20 @@ class PlayerStats:
     @property
     def player_first_name(self):
         if 'first_name' in self.data:
-            if self.data['first_name']:
-                return normalize_player_name(self.data['first_name'])
-        return None
-
-    @property
-    def player_middle_name(self):
-        if 'middle_name' in self.data:
-            if self.data['middle_name']:
-                return normalize_player_name(self.data['middle_name'])
+            return self.data['first_name']
         return None
 
     @property
     def player_last_name(self):
         if 'last_name' in self.data:
-            if self.data['last_name']:
-                return normalize_player_name(self.data['last_name'])
+            return self.data['last_name']
         return None
 
     @property
     def player_nation(self):
         if 'Nation' in self.data:
             return self.data['Nation']
+        return None
 
     @property
     def player_postition(self):
@@ -84,19 +74,25 @@ class PlayerStats:
         if self.data['Pos'] == 'FW':
             return 4
         else:
-            raise ValueError(f'{self.data['first_name']} {self.data['Pos']}')
+            raise ValueError(f'player position {self.data['first_name']} {self.data['Pos']}')
 
     @property
     def player_age(self):
-        return self.data['Age']
+        if 'Age' in self.data:
+            return self.data['Age']
+        return None
 
     @property
     def player_matches_played(self):
-        return self.data['MP']
+        if 'MP' in self.data:
+            return self.data['MP']
+        return 0
 
     @property
     def player_starts(self):
-        return self.data['Starts']
+        if 'Starts' in self.data:
+            return self.data['Starts']
+        return 0
 
     @property
     def player_minutes_played(self):
@@ -113,10 +109,7 @@ class PlayerStats:
     @property
     def player_goals(self):
         if 'Gls' in self.data:
-            try:
-                return self.data['Gls']
-            except Exception as e:
-                raise ValueError(f'{self.data['first_name']}')
+            return self.data['Gls']
         return 0
 
     @property
@@ -168,7 +161,6 @@ class PlayerStats:
                 return int(self.data['Saves'])
             except:
                 print(self.player_first_name)
-                print(self.player_middle_name)
                 print(self.player_last_name)
         return 0
 
@@ -179,7 +171,6 @@ class PlayerStats:
                 return int(self.data['CS'])
             except:
                 print(self.player_first_name)
-                print(self.player_middle_name)
                 print(self.player_last_name)
         return 0
 
@@ -190,7 +181,6 @@ class PlayerStats:
                 return int(self.data['PKsv'])
             except:
                 print(self.player_first_name)
-                print(self.player_middle_name)
                 print(self.player_last_name)
         return 0
     @property
@@ -255,106 +245,66 @@ class GetPlayerStats:
 
         return teams_urls
 
-    def get_teams_players_stats(self, team, url, i):
-        request = requests.get(url)
-        soup = BeautifulSoup(request.content, 'html.parser')
-        player_headers = soup.find(attrs={'id':'stats_standard_9'}).findAll(name='tr')[1].findAll('th')
-        player_rows = soup.find(attrs={'id':'stats_standard_9'}).find(name='tbody').findAll(name='tr')
-        keeper_headers = list(soup.find(attrs={'id':'stats_keeper_9'}).findAll(name='tr')[1].findAll(name='th'))
-        keepers_rows = soup.find(attrs={'id':'stats_keeper_9'}).find(name='tbody').findAll(name='tr')
+    def get_teams_players_stats(self, teams_urls:dict[str, str]) -> list[PlayerStats]:
+        players_list = []
+        for team, url in teams_urls.items():
+            try:
+                request = requests.get(url)
+                request.raise_for_status()
+                soup = BeautifulSoup(request.content, 'html.parser')
+                player_headers = soup.find(attrs={'id':'stats_standard_9'}).findAll(name='tr')[1].findAll('th')
+                player_rows = soup.find(attrs={'id':'stats_standard_9'}).find(name='tbody').findAll(name='tr')
+                keeper_headers = list(soup.find(attrs={'id':'stats_keeper_9'}).findAll(name='tr')[1].findAll(name='th'))
+                keepers_rows = soup.find(attrs={'id':'stats_keeper_9'}).find(name='tbody').findAll(name='tr')
 
-        try:
-            for row in player_rows:
-                player_dict = {}
-                player_row = list(row)
-                split_name = player_row[0].find(name='a').text.split(' ')
-                player_dict['first_name'] = split_name[0]
-                player_dict['middle_name'] = split_name[1] if len(split_name) > 2 else None
-                if len(split_name) == 2:
-                    player_dict['last_name'] = (split_name[1])
-                elif len(split_name) > 2:
-                    player_dict['last_name'] = (split_name[2])
-                else:
-                    player_dict['last_name'] = None
-                try:
-                    player_dict['Nation'] = player_row[1].find(name='a').find(name='span').text.split(' ')[-1]
-                except:
-                    pass
-                player_dict['Team'] = team
-                for header, td in zip(player_headers[2:16], player_row[2:16]):
-                    if td.text == None or td.text == '':
-                        player_dict[header.text] = None
-                    elif header.text == 'Age':
-                        player_dict[header.text] = int(td.text.split('-')[0])
-                    elif header.text == 'Pos':
-                        player_dict[header.text] = td.text
-                    elif header.text == '90s':
-                        player_dict[header.text] = Decimal(td.text)
-                    elif header.text == 'Min':
-                        player_dict[header.text] = int(td.text.replace(',', ''))
-                    else:
-                        player_dict[header.text] =  int(td.text)
-
-                if player_dict['Pos'] == 'GK':
-                    print(f'gk found {player_dict['first_name']} {player_dict["last_name"]}')
-                    for row in keepers_rows:
-                        keeper_row = list(row)
-                        keeper_dict = {}
-                        split_name = keeper_row[0].find(name='a').text.split(' ')
-                        keeper_dict['first_name'] = split_name[0]
-                        keeper_dict['middle_name'] = split_name[1] if len(split_name) > 2 else None
-                        if len(split_name) == 2:
-                            keeper_dict['last_name'] = (split_name[1])
-                        elif len(split_name) > 2:
-                            keeper_dict['last_name'] = (split_name[2])
+                for row in player_rows:
+                    player_dict = {}
+                    player_row = list(row)
+                    name_dict = split_name(player_row[0].find(name='a').text)
+                    player_dict['first_name'] = name_dict['first_name']
+                    player_dict['last_name'] = name_dict['last_name']
+                    try:
+                        player_dict['Nation'] = player_row[1].find(name='a').find(name='span').text.split(' ')[-1]
+                    except:
+                        pass
+                    player_dict['Team'] = team
+                    for header, td in zip(player_headers[2:16], player_row[2:16]):
+                        if td.text == None or td.text == '':
+                            player_dict[header.text] = None
+                        elif header.text == 'Age':
+                            player_dict[header.text] = int(td.text.split('-')[0])
+                        elif header.text == 'Pos':
+                            player_dict[header.text] = td.text
+                        elif header.text == '90s':
+                            player_dict[header.text] = Decimal(td.text)
+                        elif header.text == 'Min':
+                            player_dict[header.text] = int(td.text.replace(',', ''))
                         else:
-                            keeper_dict['last_name'] = None
-                        if keeper_dict['first_name'] == player_dict['first_name'] and keeper_dict['middle_name'] == player_dict['middle_name'] and keeper_dict['last_name'] == player_dict['last_name']:
-                            print(f'gk match {player_dict["first_name"]} {player_dict["last_name"]}')
-                            player_dict[keeper_headers[11].text] = keeper_row[11].text
-                            player_dict[keeper_headers[16].text] = keeper_row[16].text
-                            player_dict[keeper_headers[19].text] = keeper_row[19].text
+                            player_dict[header.text] =  int(td.text)
 
-                player_object = PlayerStats(data=player_dict)
-                try:
-                    with transaction.atomic():
-                        Player.objects.create(
-                            first_name= player_object.player_first_name,
-                            middle_name= player_object.player_middle_name,
-                            last_name= player_object.player_last_name,
-                            nation=player_object.player_nation,
-                            age = player_object.player_age,
-                            position= player_object.player_postition,
-                            matches_played = player_object.player_matches_played,
-                            starts = player_object.player_starts,
-                            minutes = player_object.player_minutes_played,
-                            nineties = player_object.player_90s,
-                            goals = player_object.player_goals,
-                            assists = player_object.player_assists,
-                            goals_and_assists = player_object.player_goals_and_assists,
-                            none_penalty_goals = player_object.player_non_penalty_goals,
-                            penalty_goals = player_object.player_penalty_goals,
-                            penalties_attempted = player_object.player_penalties_attempted,
-                            yellow_cards = player_object.player_yellow_cards,
-                            red_cards = player_object.player_red_cards,
-                            clean_sheets = player_object.player_clean_sheets,
-                            saves = player_object.player_saves,
-                            penalty_saves = player_object.player_penalty_saves,
-                            team=player_object.player_team
-                        )
-                except IntegrityError:
-                    raise ValueError(f'{player_dict["first_name"]} {team} {i}')
+                    if player_dict['Pos'] == 'GK':
+                        print(f'gk found {player_dict['first_name']} {player_dict["last_name"]}')
+                        for row in keepers_rows:
+                            keeper_row = list(row)
+                            keeper_name = split_name(keeper_row[0].find(name='a').text)
 
-        except:
-            raise ValueError(f'{player_dict['first_name']} {team} {i}')
+                            if keeper_name['first_name'] == player_dict['first_name'] and keeper_name['last_name'] == player_dict['last_name']:
+                                print(f'gk match {player_dict["first_name"]} {player_dict["last_name"]}')
+                                player_dict[keeper_headers[11].text] = keeper_row[11].text
+                                player_dict[keeper_headers[16].text] = keeper_row[16].text
+                                player_dict[keeper_headers[19].text] = keeper_row[19].text
+
+                    players_list.append(PlayerStats(data=player_dict))
+
+            except Exception as e:
+                print(e)
+
+        return players_list
 
 
     def get_player_stats(self):
-        team_urls = self.get_teams_urls()
-        i = 0
-        for key, value in team_urls.items():
-            i += 1
-            self.get_teams_players_stats(team=key, url=value, i=i)
+        teams_urls = self.get_teams_urls()
+        return self.get_teams_players_stats(teams_urls=teams_urls)
 
     def test(self):
         team_urls = self.get_teams_urls()
