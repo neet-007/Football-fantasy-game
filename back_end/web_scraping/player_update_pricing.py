@@ -8,6 +8,9 @@ from player_info.models import Player
 from decimal import Decimal
 from django.db.models import F
 
+from utils.premier_league_utils import get_premier_league_team_int
+from utils.player_info_utils import split_name
+
 import unicodedata
 import re
 
@@ -28,7 +31,7 @@ def normalize_name(name):
 class PlayerPricing():
     def __init__(self) -> None:
         self.teams_urls = get_teams_urls()
-
+    """
     def get_team_int(self, name:str, team:str) -> int:
         if team == 'arsenal':
             return 0
@@ -71,6 +74,7 @@ class PlayerPricing():
         if team == 'wolves':
             return 19
         raise ValueError(f'{name} {team} is not registerd')
+    """
 
     def get_position_int(self, name:str, position:str) -> int:
         if ',' in position:
@@ -86,7 +90,7 @@ class PlayerPricing():
         else:
             raise ValueError(f'{name} {position}')
 
-    def get_teams_stats(self) -> dict:
+    def get_teams_stats(self) -> dict[str, dict]:
         players_dict = {}
         for team, url in  self.teams_urls.items():
             request = requests.get(url)
@@ -100,7 +104,11 @@ class PlayerPricing():
                 for row in player_rows:
                     player_dict = {}
                     player_row = list(row)
-                    split_name = player_row[0].find(name='a').text.split(' ')
+                    s_name = split_name(player_row[0].find(name='a').text)
+                    player_dict['first_name'] = s_name['first_name']
+                    player_dict['last_name'] = s_name['last_name']
+
+                    """
                     player_dict['first_name'] = normalize_name(split_name[0])
                     player_dict['middle_name'] = normalize_name(split_name[1]) if len(split_name) > 2 else None
                     if len(split_name) == 2:
@@ -109,16 +117,14 @@ class PlayerPricing():
                         player_dict['last_name'] = normalize_name(split_name[2])
                     else:
                         player_dict['last_name'] = None
-                    try:
-                        player_dict['Nation'] = player_row[1].find(name='a').find(name='span').text.split(' ')[-1]
-                    except:
-                        pass
-                    player_dict['Team'] = self.get_team_int(player_dict['first_name'], team)
+                    """
+                    player_dict['Team'] = get_premier_league_team_int(team)
+
                     for header, td in zip(player_headers[2:16], player_row[2:16]):
                         if td.text == None or td.text == '':
                             player_dict[header.text] = None
                         elif header.text == 'Age':
-                            player_dict[header.text] = int(td.text.split('-')[0])
+                            pass
                         elif header.text == 'Pos':
                             player_dict[header.text] = self.get_position_int(player_dict['first_name'], td.text)
                         elif header.text == '90s':
@@ -132,8 +138,8 @@ class PlayerPricing():
                         print(f'gk found {player_dict['first_name']} {player_dict["last_name"]}')
                         for row in keepers_rows:
                             keeper_row = list(row)
-                            keeper_dict = {}
-                            split_name = keeper_row[0].find(name='a').text.split(' ')
+                            s_name = split_name(keeper_row[0].find(name='a').text)
+                            """
                             keeper_dict['first_name'] = split_name[0]
                             keeper_dict['middle_name'] = split_name[1] if len(split_name) > 2 else None
                             if len(split_name) == 2:
@@ -142,7 +148,8 @@ class PlayerPricing():
                                 keeper_dict['last_name'] = (split_name[2])
                             else:
                                 keeper_dict['last_name'] = None
-                            if keeper_dict['first_name'] == player_dict['first_name'] and keeper_dict['middle_name'] == player_dict['middle_name'] and keeper_dict['last_name'] == player_dict['last_name']:
+                            """
+                            if s_name['first_name'] == player_dict['first_name'] and s_name['last_name'] == player_dict['last_name']:
                                 print(f'gk match {player_dict["first_name"]} {player_dict["last_name"]}')
                                 player_dict[keeper_headers[11].text] = keeper_row[11].text
                                 player_dict[keeper_headers[16].text] = keeper_row[16].text
