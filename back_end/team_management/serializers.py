@@ -5,12 +5,13 @@ from rest_framework.serializers import ModelSerializer, ValidationError, ListFie
 
 
 class TeamSerializer(ModelSerializer):
-    user = UserModelSerializer()
+    user = UserModelSerializer(required=False)
+    favorite_team_pk = IntegerField(required=False, write_only=True)
     class Meta:
         model = Team
         fields = '__all__'
         extra_kwargs = {
-                    'user': {'required':False, 'read_only':True},
+                    'favorite_team': {'required':False, 'read_only':True},
                     'overall_points': {'required':False, 'read_only':True},
                     'overall_rank': {'required':False, 'read_only':True},
                     'free_transfers': {'required':False},
@@ -22,6 +23,23 @@ class TeamSerializer(ModelSerializer):
                     'triple_captin': {'required':False},
                     'wild_card': {'required':False}
                 }
+
+    def validate(self, attrs):
+        if attrs.get('name') and attrs.get('favorite_team_pk'):
+            if len(attrs) != 2:
+                raise ValidationError('can only pass name and favorite team when creating a team')
+
+            if not self.context.get('user'):
+                raise ValidationError('must provied a user')
+
+            attrs['user'] = self.context['user']
+
+            return super().validate(attrs)
+
+        if (attrs.get('name') and not attrs.get('favorite_team_pk')) or (not attrs.get('name') and attrs.get('favorite_team_pk')):
+            raise ValidationError('can only pass name and favorite team when creating a team')
+
+        return super().validate(attrs)
 
 class GameWeekPlayerSerializer(ModelSerializer):
     class Meta:
@@ -35,7 +53,7 @@ class GameWeekTeamSerializer(ModelSerializer):
     team = TeamSerializer()
     team_pk = IntegerField(write_only=True)
     players_pks = ListField(child=IntegerField(), allow_empty=False, min_length=11, max_length=11, write_only=True)
-    bench_order = DictField(child=IntegerField(), allow_empty=False, min_length=4, max_length=4, write_only=True)
+    bench_order = DictField(child=IntegerField(), allow_empty=False, write_only=True)
     players = GameWeekPlayerSerializer(many=True)
     class Meta:
         model = GameWeekTeam

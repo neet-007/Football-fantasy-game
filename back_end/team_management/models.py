@@ -2,6 +2,7 @@ from collections.abc import Iterable
 from typing import Any
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
 from django.db.models.signals import m2m_changed
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -13,8 +14,25 @@ GAMEWEEK = 1
 user_model = get_user_model()
 
 
+class TeamManager(models.Manager):
+    def create(self, user, name:str, favorite_team_pk:int ) -> 'Team':
+        if user == AnonymousUser:
+            raise ValueError('user is anonymous')
+
+        try:
+            favorite_team = PremierLeagueTeamBase.objects.get(pk=favorite_team_pk)
+        except PremierLeagueTeamBase.DoesNotExist:
+            raise ValueError('team is not registred')
+
+        team = Team(user=user, name=name, favorite_team=favorite_team)
+        team.save()
+
+        return team
+
+
 class Team(models.Model):
     user = models.ForeignKey(user_model, on_delete=models.CASCADE)
+    name = models.CharField(max_length=10)
     favorite_team = models.ForeignKey(PremierLeagueTeamBase, on_delete=models.PROTECT)
     overall_points = models.IntegerField(default=0, db_index=True)
     overall_rank = models.IntegerField(default=0, db_index=True)
@@ -26,6 +44,8 @@ class Team(models.Model):
     free_hit = models.BooleanField(default=True)
     triple_captin = models.BooleanField(default=True)
     wild_card = models.BooleanField(default=True)
+
+    objects = TeamManager()
 
     """
     def save(self, *args, **kwargs) -> None:

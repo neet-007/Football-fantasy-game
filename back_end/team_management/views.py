@@ -10,9 +10,15 @@ class TeamViewSet(ModelViewSet):
     serializer_class = TeamSerializer
 
     def create(self, request, *args, **kwargs):
-        if self.get_queryset().filter().exists():
+        if self.get_queryset().filter(user=request.user).exists():
             return Response({'error':'user can have one team'}, status.HTTP_400_BAD_REQUEST)
         return super().create(request, *args, **kwargs)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['user'] = self.request.user
+
+        return context
 
 class GameWeekTeamViewSet(ModelViewSet):
     queryset = GameWeekTeam.objects.all()
