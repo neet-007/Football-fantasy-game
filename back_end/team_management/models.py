@@ -1,6 +1,6 @@
 from collections.abc import Iterable
 from typing import Any
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
@@ -8,6 +8,7 @@ from django.db.models.signals import m2m_changed
 from django.core.validators import MinValueValidator, MaxValueValidator
 from player_info.models import Player, PlayerPositions
 from premier_league.models import PremierLeagueTeamBase
+from traceback import print_exc
 # Create your models here.
 GAMEWEEK = 1
 
@@ -54,30 +55,38 @@ class Team(models.Model):
     """
 
 class GameWeekTeamManager(models.Manager):
-    def create(self, team_pk:int, starters:list[int], bench_order:dict[int, int]):
-        team = Team.objects.filter(pk=team_pk)
-
-        if not team:
-            raise ValidationError('team doesnt exist')
-
-        if len(starters) != 11 and len(bench_order) != 4:
-            raise ValidationError('startes must be 11 and benched players must be 4')
-
-        game_week_team = GameWeekTeam(team=team[0], game_week=GAMEWEEK)
-        game_week_team.save()
-        players_starters = Player.objects.filter(pk__in=starters)
-        players_benched = Player.objects.filter(pk__in=bench_order.keys())
+    def check_team_player_positions(self, players_starters, players_benched):
         if sum(player.position == PlayerPositions.GK for player in players_starters) + sum(player.position == PlayerPositions.GK for player in players_benched) != 2 and sum(player.position == PlayerPositions.DF for player in players_starters) + sum(player.position == PlayerPositions.DF for player in players_benched) != 5 and sum(player.position == PlayerPositions.MF for player in players_starters) + sum(player.position == PlayerPositions.MF for player in players_benched) != 5 and sum(player.position == PlayerPositions.ST for player in players_starters) + sum(player.position == PlayerPositions.ST for player in players_benched) != 3:
             raise ValidationError('players structure is as follows: 2 goalkeepers, 5 defenders, 5 midfielders, 3 strikers')
 
-        players_objectes = [GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=True) for player in players_starters]
-        for pk, order in bench_order.items():
-            player = players_benched.filter(pk=pk)[0]
-            players_objectes.append(GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=False, benched_order=order))
+    def create(self, team_pk:int, starters:list[int], bench_order:dict[int, int]):
+        try:
+            with transaction.atomic():
+                team = Team.objects.filter(pk=team_pk)
 
-        GameWeekPlayer.objects.bulk_create(players_objectes)
+                if not team:
+                    raise ValidationError('team doesnt exist')
 
-        return game_week_team
+                if len(starters) != 11 and len(bench_order) != 4:
+                    raise ValidationError('startes must be 11 and benched players must be 4')
+
+                game_week_team = GameWeekTeam(team=team[0], game_week=GAMEWEEK)
+                game_week_team.save()
+                players_starters = Player.objects.filter(pk__in=starters)
+                players_benched = Player.objects.filter(pk__in=bench_order.keys())
+
+                self.check_team_player_positions(players_starters=players_starters, players_benched=players_benched)
+
+                players_objectes = [GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=True) for player in players_starters]
+                for pk, order in bench_order.items():
+                    player = players_benched.filter(pk=int(pk))[0]
+                    players_objectes.append(GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=False, benched_order=order))
+
+                GameWeekPlayer.objects.bulk_create(players_objectes)
+
+                return game_week_team
+        except:
+            print_exc()
 
 class GameWeekTeam(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='game_week_team_team')
@@ -100,6 +109,48 @@ class GameWeekPlayer(models.Model):
     benched_order = models.IntegerField(default=None, null=True, choices=GameWeekTeamPlayerBenchedOrderChoices.choices, blank=True)
     points = models.IntegerField(default=0, db_index=True, blank=True)
 
+class PlayerTransferManager(models.Manager):
+    def create(self, player_in_pk, player_out_pk, team) -> 'PlayerTransfer':
+        player_in = Player.objects.get(pk=player_in_pk)
+        player_out = Player.objects.get(pk=player_out_pk)
+
+        try:
+            game_week_team = GameWeekTeam.objects.get(team=team, game_week=GAMEWEEK)
+        except GameWeekTeam.DoesNotExist:
+            raise ValueError('game week team not found')
+
+        players = game_week_team.game_week_player_game_week_team.all()
+
+        starter = False
+        benched_order = None
+        for player in players:
+            if player == player_out:
+                starter = player.starter
+                benched_order = player.benched_order
+                player.delete()
+                break
+
+        if starter:
+            GameWeekPlayer.objects.create(player=player_in, game_week_team=game_week_team, position=player_in.position, starter=starter)
+        else:
+            GameWeekPlayer.objects.create(player=player_in, game_week_team=game_week_team, position=player_in.position, starter=False, benched_order=benched_order)
+
+        starters = []
+        benched_players = []
+
+        for player in players:
+            if player.starter:
+                starters.append(player)
+                continue
+            benched_players.append(player)
+
+        GameWeekTeam.objects.check_team_player_positions(players_starters=starters, players_benched=benched_players)
+
+        player_transfer = PlayerTransfer(team=team, player_in=player_in, player_out=player_out, game_week=GAMEWEEK)
+        player_transfer.save()
+
+        return player_transfer
+
 class PlayerTransfer(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     player_in = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='player_transfer_player_in')
@@ -107,11 +158,16 @@ class PlayerTransfer(models.Model):
     game_week = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(38)])
     points_cost = models.IntegerField(default=0)
 
+    objects = PlayerTransferManager()
+
     def save(self, *args, **kwargs) -> None:
         if self.team.bank - self.player_in.price + self.player_out.price < 0:
             raise ValidationError('player doesnt have enough money to make this transfer')
         if self.team.free_transfers == 0:
             self.points_cost = 4
+        else:
+            self.team.free_transfers -= 1
+
         return super().save(*args, **kwargs)
 
 
