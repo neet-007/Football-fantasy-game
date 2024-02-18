@@ -1,0 +1,12 @@
+:root{
+    --main-theme-result-main-clr:#370617;
+}
+.main-theme_result-box{
+    background-color:var(--main-theme-result-main-clr);
+    color: var(--main-theme-secondary-text-clr);
+}
+.result-box_article{
+    max-width: 5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+}

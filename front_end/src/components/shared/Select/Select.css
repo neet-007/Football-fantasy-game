@@ -1,0 +1,26 @@
+.select_select{
+    position: relative;
+    padding: 0.5rem 1rem;
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+}
+.select_select::after, .select_select::before{
+    --size: 0.3rem;
+    position: absolute;
+    content: '';
+    right: 1rem;
+    pointer-events: none;
+}
+.select_select::before {
+    border-left: var(--size) solid transparent;
+    border-right: var(--size) solid transparent;
+    border-bottom: var(--size) solid black;
+    top: 40%;
+}
+.select_select::after {
+    border-left: var(--size) solid transparent;
+    border-right: var(--size) solid transparent;
+    border-top: var(--size) solid black;
+    top: 55%;
+}

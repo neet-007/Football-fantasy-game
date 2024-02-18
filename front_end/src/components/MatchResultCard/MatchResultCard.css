@@ -1,0 +1,12 @@
+.main-theme_match-result-card{
+    background-color: var(--main-theme-utility-hover);
+}
+.main-theme_match-result-card:hover{
+    background-color: var(--main-theme-primary-clr);
+    color: var(--main-theme-secondary-text-clr);
+}
+.match-result-card_article{
+    padding: 1rem;
+    width: 100%;
+    transition: 200ms ease-in-out;
+}

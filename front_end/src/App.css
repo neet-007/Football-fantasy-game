@@ -1,42 +1,99 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+*, *::before, *::after{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-weight: normal;
 }
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+:root{
+  --main-theme-primary-clr: #9600ff;
+  --main-theme-secondary-clr: #0d41e1;
+  --main-theme-utility: #04e762;
+  --main-theme-utility-hover: #f1faee;
+  --main-theme-primary-text-clr: #0a0908;
+  --main-theme-secondary-text-clr: #f1faee;
+  --main-theme-primary-text-clr-hover: #0a0908;
+  --win-clr:#04e762;
+  --loss-clr:#d90429;
+  --draw-clr:#8d99ae;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+.d-flex{
+  display: flex;
 }
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.f-di-column{
+  flex-direction: column;
 }
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.f-di-row{
+  flex-direction: row;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.justify-content-center{
+  justify-content: center;
 }
-
-.card {
-  padding: 2em;
+.justify-content-start{
+  justify-content: start;
 }
-
-.read-the-docs {
-  color: #888;
+.justify-content-between{
+  justify-content: space-between;
+}
+.align-items-center{
+  align-items: center;
+}
+.gap-1{
+  gap: 1rem;
+}
+.f-grow-1{
+  flex-grow: 1;
+}
+.f-shrink-1{
+  flex-shrink: 1;
+}
+.f-basis-20{
+  flex-basis: 20%;
+}
+.f-basis-25{
+  flex-basis: 25%;
+}
+.f-basis-30{
+  flex-basis: 30%;
+}
+.cursor-pointer{
+  cursor: pointer;
+}
+.m-left-auto{
+  margin-left: auto;
+}
+.backgroundColor-white{
+  background-color: var(--main-theme-utility-hover);
+}
+.backgroundColor-primary{
+  background-color: var(--main-theme-primary-clr);
+}
+.backgroundColor-win{
+  background-color: var(--win-clr);
+}
+.backgroundColor-loss{
+  background-color: var(--loss-clr);
+}
+.backgroundColor-draw{
+  background-color: var(--draw-clr);
+}
+.border-radius-circle{
+  border-radius: 50%;
+}
+.p-25{
+  padding: 0.25rem;
+}
+.p-x-1{
+  padding: 0 1rem;
+}
+.p-y-1{
+  padding: 1rem;
+}
+.p-1{
+  padding: 1rem;
+}
+.cap{
+  text-transform: capitalize;
+}
+.width-100{
+  width: 100%;
 }
