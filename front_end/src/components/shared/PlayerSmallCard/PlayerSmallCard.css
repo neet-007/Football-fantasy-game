@@ -1,0 +1,24 @@
+.player-small-card_article{
+    --img-width: 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: center;
+    width: fit-content;
+}
+.player-small-card_img{
+    width: var(--img-width);
+}
+.player-small-card_name-div{
+    display: flex;
+    width: calc(var(--img-width) * 2);
+    background-color: var(--main-theme-primary-clr);
+    color: var(--main-theme-secondary-text-clr);
+    justify-content: center;
+}
+.player-small-card_div{
+    display: flex;
+    width: calc(var(--img-width) * 2);
+    background-color: var(--main-theme-utility);
+    justify-content: center;
+}

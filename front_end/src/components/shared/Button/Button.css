@@ -7,6 +7,10 @@
     color: var(--main-theme-primary-text-clr-hover);
     border: 1px solid black;
 }
+.main-theme_button-clicked{
+    background-color: var(--main-theme-utility-hover);
+    color: var(--main-theme-primary-text-clr);
+}
 .button_button{
     outline: none;
     border: 1px solid;

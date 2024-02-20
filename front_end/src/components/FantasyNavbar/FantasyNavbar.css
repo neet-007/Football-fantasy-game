@@ -1,0 +1,41 @@
+.fantasy-nav-bar_nav{
+    padding: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.fantasy-nav-bar_header{
+    font-size: 3rem;
+}
+.fantasy-nav-bar_ul{
+    position: relative;
+    display: flex;
+    list-style: none;
+    gap: 0.25rem;
+    flex-wrap:wrap;
+}
+.fantasy-nav-bar_mobile-ul{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    gap: 0.5rem;
+    overflow: hidden;
+    transition: 200ms ease-in-out;
+}
+.fantasy-nav-bar_mobile-ul-open{
+    padding: 1rem;
+    max-height: 40rem;
+    max-width: 40rem;
+}
+.fantasy-nav-bar_mobile-ul-close{
+    padding: 0rem;
+    max-height: 0;
+    max-width: 0;
+}
+
+@media only screen and (min-width:840px){
+    .fantasy-nav-bar_more-menu-container{
+        display: none;
+    }
+}

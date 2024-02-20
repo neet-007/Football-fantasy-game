@@ -1,0 +1,21 @@
+.main-theme_player-carousel_container{
+
+}
+.player-carousel_container{
+
+}
+.player-carousel_header{
+
+}
+.player-carousel_slider{
+
+}
+.player-carousel_icon-span{
+    background-color: var(--main-theme-primary-clr);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    width: fit-content;
+    padding: 0.5rem;
+}
