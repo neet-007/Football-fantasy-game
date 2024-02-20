@@ -1,13 +1,13 @@
 .player-small-card_article{
-    --img-width: 4rem;
+    --img-width: 2rem;
     display: flex;
     flex-direction: column;
     justify-content: end;
     align-items: center;
-    width: fit-content;
+    cursor: pointer;
 }
 .player-small-card_img{
-    width: var(--img-width);
+    max-width: 3rem;
 }
 .player-small-card_name-div{
     display: flex;

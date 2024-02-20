@@ -1,0 +1,62 @@
+.player-transfer-pitch_header{
+    display: grid;
+    grid-template-areas:
+    'game-week game-week game-week '
+    'game-week-date game-week-date game-week-date'
+    'transfers cost money'
+    'auto-pick . reset'
+    'wild-card wild-card wild-card';
+}
+.player-transfer-pitch_header-game-week{
+    display: flex;
+    justify-content: center;
+    grid-area: game-week;
+}
+.player-transfer-pitch_header-game-week-date{
+    display: flex;
+    justify-content: center;
+    grid-area: game-week-date;
+}
+.player-transfer-pitch_header-transfers{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    grid-area: transfers;
+}
+.player-transfer-pitch_header-cost{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    grid-area: cost;
+}
+.player-transfer-pitch_header-money{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    grid-area: money;
+}
+.player-transfer-pitch_header-auto-pick{
+    display: flex;
+    justify-content: center;
+    grid-area: auto-pick;
+}
+.player-transfer-pitch_header-reset{
+    display: flex;
+    justify-content: center;
+    grid-area: reset;
+}
+.player-transfer-pitch_header-wild-card{
+    display: flex;
+    justify-content: center;
+    grid-area: wild-card;
+}
+
+@media only screen and (min-width:750px){
+    .player-transfer-pitch_header{
+        grid-template-areas:
+        'game-week game-week game-week '
+        'game-week-date game-week-date game-week-date'
+        'transfers cost money'
+        'auto-pick wild-card reset';
+    }
+}

@@ -9,11 +9,16 @@ import Navbar from './components/Navbar/Navbar'
 import FantasyNavbar from './components/FantasyNavbar/FantasyNavbar'
 import PlayerSmallCard from './components/shared/PlayerSmallCard/PlayerSmallCard'
 import PlayerCarousel from './components/PlayerCarousel/PlayerCarousel'
+import FantasyDashboard from './components/FantasyDashboard/FantasyDashboard'
+import PlayerSelection from './components/shared/PlayerSelection/PlayerSelection'
+import PlayerPointsPitch from './components/PlayerPointsPitch/PlayerPointsPitch'
+import PlayerPickPitch from './components/PlayerPickPitch/PlayerPickPitch'
+import PlayerTransferPitch from './components/PlayerTransferPitch/PlayerTransferPitch'
 function App() {
   return (
     <>
       <Navbar/>
-      <PlayerCarousel/>
+      <PlayerTransferPitch/>
     </>
   )
 }

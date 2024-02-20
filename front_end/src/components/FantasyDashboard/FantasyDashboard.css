@@ -1,0 +1,60 @@
+.fanstasy-dashborad_nav{
+
+}
+.fanstasy-dashborad_header{
+    display: grid;
+    grid-template-columns: 30% 50% 20%;
+    grid-template-areas:
+    'game-week . prizes'
+    'button button button';
+    padding: 1rem;
+    background-color: var(--main-theme-secondary-clr);
+}
+.fanstasy-dashborad_header-game-week{
+    grid-area: game-week;
+}
+.fanstasy-dashborad_header-button{
+    grid-area: button;
+}
+.fanstasy-dashborad_header-prizes{
+    grid-area: prizes;
+}
+.fanstasy-dashborad_header-img{
+    display: none;
+    grid-area: img;
+}
+.fanstasy-dashborad_options{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    background-color: var(--main-theme-secondary-clr);
+    gap: 0.25rem;
+}
+.fanstasy-dashborad_options > *{
+    background-color: var(--main-theme-light-clr);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+@media only screen and (min-width:650px){
+    .fanstasy-dashborad_header{
+        grid-template-columns: 40% 60%;
+        grid-template-areas:
+        'game-week img'
+        'button img'
+        'prizes img';
+        background-color: var(--main-theme-secondary-clr);
+    }
+    .fanstasy-dashborad_header-img{
+        display: block;
+    }
+    .fanstasy-dashborad_options{
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media only screen and (min-width:1200px){
+    .fanstasy-dashborad_options{
+        grid-template-columns: repeat(6, 1fr);
+    }
+}

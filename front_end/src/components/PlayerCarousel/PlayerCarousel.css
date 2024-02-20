@@ -1,14 +1,32 @@
 .main-theme_player-carousel_container{
-
+    background-color: var(--main-theme-utility-hover);
+    color: var(--main-theme-primary-text-clr);
 }
 .player-carousel_container{
-
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 .player-carousel_header{
-
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.player-carousel_slider-container{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 1rem;
 }
 .player-carousel_slider{
-
+    display: flex;
+    gap: 1rem;
+    overflow: scroll;
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+}
+.player-carousel_slider::-webkit-scrollbar{
+    display: none;
 }
 .player-carousel_icon-span{
     background-color: var(--main-theme-primary-clr);
