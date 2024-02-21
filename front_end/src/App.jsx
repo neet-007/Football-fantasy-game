@@ -14,11 +14,14 @@ import PlayerSelection from './components/shared/PlayerSelection/PlayerSelection
 import PlayerPointsPitch from './components/PlayerPointsPitch/PlayerPointsPitch'
 import PlayerPickPitch from './components/PlayerPickPitch/PlayerPickPitch'
 import PlayerTransferPitch from './components/PlayerTransferPitch/PlayerTransferPitch'
+import SectionHeader from './components/shared/SectionHeader/SectionHeader'
+import LeaguesDetails from './components/LeaguesDetails/LeaguesDetails'
+import StatsList from './components/StatsList/StatsList'
 function App() {
   return (
     <>
       <Navbar/>
-      <PlayerTransferPitch/>
+      <StatsList/>
     </>
   )
 }

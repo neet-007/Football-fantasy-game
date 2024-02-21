@@ -1,0 +1,9 @@
+.main-theme_section-header_h3{
+    background-color: var(--main-theme-primary-clr);
+    color: var(--main-theme-utility);
+}
+.section-header_h3{
+    padding: 0.5rem 1rem;
+    border-radius: 0 0 0.75rem 0.75rem;
+    width: fit-content;
+}

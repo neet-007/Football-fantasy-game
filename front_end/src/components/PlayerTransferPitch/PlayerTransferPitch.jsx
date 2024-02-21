@@ -6,7 +6,7 @@ import PlayerSelection from '../shared/PlayerSelection/PlayerSelection'
 function PlayerTransferPitch() {
   return (
     <section>
-        <PlayerSelection>
+        <PlayerSelection transfer>
             <div className='player-transfer-pitch_header cap'>
                 <p className='player-transfer-pitch_header-game-week'>game week</p>
                 <p className='player-transfer-pitch_header-game-week-date'>dsadsadsadsadsadsad</p>

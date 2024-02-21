@@ -19,3 +19,6 @@
     transition: 200ms ease-in-out;
     cursor: pointer;
 }
+.button_no-border{
+    border: none;
+}

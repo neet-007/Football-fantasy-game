@@ -3,8 +3,10 @@ import PitchSvg from '../PitchSvg'
 import './PlayerSelection.css'
 import Button from '../Button/Button'
 import PlayerSmallCard from '../PlayerSmallCard/PlayerSmallCard'
+import Row from '../Row/Row'
+import Column from '../Column/Column'
 
-function PlayerSelection({benchRow, children}) {
+function PlayerSelection({benchRow, pickTeam, transfer, children}) {
   return (
     <article className='player-selection_article'>
         <div className='player-selection_header'>
@@ -43,6 +45,27 @@ function PlayerSelection({benchRow, children}) {
                 <PlayerSmallCard/>
             </span>
         </div>
+        {transfer &&
+        <div className='player-selection_transfer'>
+            <Button className={`width-100`} childern='transfers'/>
+        </div>
+        }
+        {pickTeam &&
+        <Row className='player-selection_pick-team cap'>
+            <Column className={'d-flex f-di-column gap-1'}>
+                <p className='align-self-center'>bench boost</p>
+                <Button className={'cap f-grow-1'} childern='play'/>
+            </Column>
+            <Column className={'d-flex f-di-column gap-1'}>
+                <p className='align-self-center'>triple captain</p>
+                <Button className={'cap f-grow-1'} childern='play'/>
+            </Column>
+            <Column className={'d-flex f-di-column gap-1'}>
+                <p className='align-self-center'>free hit</p>
+                <Button className={'cap f-grow-1'} childern='play'/>
+            </Column>
+        </Row>
+        }
     </article>
   )
 }

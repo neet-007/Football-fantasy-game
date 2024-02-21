@@ -67,3 +67,13 @@
 .player-selection_pitch-bench-row-hide{
     display: none;
 }
+.player-selection_transfer{
+    margin: -2rem;
+}
+.player-selection_pick-team{
+    display: flex;
+    gap: 1rem;
+}
+.player-selection_pick-team > *{
+    flex-grow: 1;
+}
