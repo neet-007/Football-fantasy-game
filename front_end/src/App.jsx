@@ -1,27 +1,31 @@
+import {Routes, Route} from 'react-router-dom'
 import './App.css'
-import MatchResultCard from './components/MatchResultCard/MatchResultCard'
-import Button from './components/shared/Button/Button'
-import Select from './components/shared/Select/Select'
-import Row from './components/shared/Row/Row'
-import Column from './components/shared/Column/Column'
-import LeagueTable from './components/LeagueTable/LeagueTable'
-import Navbar from './components/Navbar/Navbar'
-import FantasyNavbar from './components/FantasyNavbar/FantasyNavbar'
-import PlayerSmallCard from './components/shared/PlayerSmallCard/PlayerSmallCard'
-import PlayerCarousel from './components/PlayerCarousel/PlayerCarousel'
-import FantasyDashboard from './components/FantasyDashboard/FantasyDashboard'
-import PlayerSelection from './components/shared/PlayerSelection/PlayerSelection'
-import PlayerPointsPitch from './components/PlayerPointsPitch/PlayerPointsPitch'
-import PlayerPickPitch from './components/PlayerPickPitch/PlayerPickPitch'
-import PlayerTransferPitch from './components/PlayerTransferPitch/PlayerTransferPitch'
-import SectionHeader from './components/shared/SectionHeader/SectionHeader'
-import LeaguesDetails from './components/LeaguesDetails/LeaguesDetails'
-import StatsList from './components/StatsList/StatsList'
+import InfoLayout from './pages/Info/InfoLayout'
+import FantasyLayout from './pages/Fantasy/FantasyLayout'
+import Home from './pages/Info/Home/Home'
+import Fixtures from './pages/Info/Fixtures/Fixtures'
+import Results from './pages/Info/Results/Results'
+import Stats from './pages/Info/Stats/Stats'
+import Tables from './pages/Info/Tables/Tables'
+
 function App() {
   return (
     <>
-      <Navbar/>
-      <StatsList/>
+      <Routes>
+        <Route element={<InfoLayout/>}>
+          <Route path='' element={<Home/>}/>
+          <Route path='/fixtures' element={<Fixtures/>}/>
+          <Route path='/results' element={<Results/>}/>
+          <Route path='/stats' element={<Stats/>}/>
+          <Route path='/tables' element={<Tables/>}/>
+        </Route>
+        <Route path='/auth'>
+
+        </Route>
+        <Route path='/fantasy' element={<FantasyLayout/>}>
+
+        </Route>
+      </Routes>
     </>
   )
 }
