@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import './Navbar.css'
 import { List, X } from 'react-bootstrap-icons'
+import { NavLink } from 'react-router-dom'
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -33,11 +34,36 @@ function Navbar() {
             </p>
             <div className='nav-bar_ul-wrapper' ref={menuRef}>
                 <ul className='nav-bar_ul'>
-                    <li className='cursor-pointer'>home</li>
-                    <li className='cursor-pointer'>fixture</li>
-                    <li className='cursor-pointer'>results</li>
-                    <li className='cursor-pointer'>table</li>
-                    <li className='cursor-pointer'>fantasy</li>
+                    <li className='cursor-pointer'>
+                        <NavLink className={'txt-decoration clr-inherit cap'}
+                        to='/'>
+                            home
+                        </NavLink>
+                    </li>
+                    <li className='cursor-pointer'>
+                        <NavLink className={'txt-decoration clr-inherit cap'}
+                        to='/fixtures'>
+                            fixtures
+                        </NavLink>
+                    </li>
+                    <li className='cursor-pointer'>
+                        <NavLink className={'txt-decoration clr-inherit cap'}
+                        to='/results'>
+                            results
+                        </NavLink>
+                    </li>
+                    <li className='cursor-pointer'>
+                        <NavLink className={'txt-decoration clr-inherit cap'}
+                        to='/tables'>
+                            tables
+                        </NavLink>
+                    </li>
+                    <li className='cursor-pointer'>
+                        <NavLink className={'txt-decoration clr-inherit cap'}
+                        to='/fantasy'>
+                            fantasy
+                        </NavLink>
+                    </li>
                 </ul>
             </div>
         </div>

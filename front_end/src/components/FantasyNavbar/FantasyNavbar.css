@@ -14,6 +14,9 @@
     gap: 0.25rem;
     flex-wrap:wrap;
 }
+.fantasy-nav-bar_ul a.active button{
+    background-color: var(--main-theme-utility-hover);
+}
 .fantasy-nav-bar_mobile-ul{
     position: absolute;
     display: flex;

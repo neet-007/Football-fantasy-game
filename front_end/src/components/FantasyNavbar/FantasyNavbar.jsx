@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import './FantasyNavbar.css'
 import Button from '../shared/Button/Button'
 import InvisibleButton from '../shared/InvisibleButton/InvisibleButton'
+import { NavLink } from 'react-router-dom'
 function FantasyNavbar() {
   const [isMoreOpen, setIsMoreOpen] = useState(false)
 
@@ -10,16 +11,24 @@ function FantasyNavbar() {
         <p className='fantasy-nav-bar_header cap'>fantasy</p>
         <ul className='fantasy-nav-bar_ul'>
             <li>
-                <Button childern='status' className='cap cursor-pointer' clicked/>
+                <NavLink to={'status'}>
+                    <Button childern='status' className='cap cursor-pointer'/>
+                </NavLink>
             </li>
             <li>
-                <Button childern='points' className='cap cursor-pointer'/>
+                <NavLink to={'points'}>
+                    <Button childern='points' className='cap cursor-pointer'/>
+                </NavLink>
             </li>
             <li>
-                <Button childern='pick team' className='cap cursor-pointer'/>
+                <NavLink to={'pick-team'}>
+                    <Button childern='pick team' className='cap cursor-pointer'/>
+                </NavLink>
             </li>
             <li>
-                <Button childern='transfers' className='cap cursor-pointer'/>
+                <NavLink to={'transfers'}>
+                    <Button childern='transfers' className='cap cursor-pointer'/>
+                </NavLink>
             </li>
             <li className='fantasy-nav-bar_more-menu-container'>
                 <Button childern='more' className='cap cursor-pointer' onClick={()=>setIsMoreOpen(prev => !prev)}/>
@@ -36,13 +45,19 @@ function FantasyNavbar() {
                 </ul>
             </li>
             <li>
-                <Button childern='leagues & cups' className='cap cursor-pointer'/>
+                <NavLink to={'leagues-and-cups'}>
+                    <Button childern='leagues & cups' className='cap cursor-pointer'/>
+                </NavLink>
             </li>
             <li>
-                <Button childern='fixtures' className='cap cursor-pointer'/>
+                <NavLink to={'fixtures'}>
+                    <Button childern='fixtures' className='cap cursor-pointer'/>
+                </NavLink>
             </li>
             <li>
-                <Button childern='stats' className='cap cursor-pointer'/>
+                <NavLink to={'stats'}>
+                    <Button childern='stats' className='cap cursor-pointer'/>
+                </NavLink>
             </li>
         </ul>
     </nav>

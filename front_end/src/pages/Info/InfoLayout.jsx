@@ -8,9 +8,7 @@ function InfoLayout() {
     <main>
         <Navbar/>
         <Suspense fallback={<h1>Loading...</h1>}>
-            <Outlet>
-
-            </Outlet>
+            <Outlet/>
         </Suspense>
     </main>
   )

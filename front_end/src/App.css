@@ -123,3 +123,9 @@
 .position-relative{
   position: relative;
 }
+.txt-decoration{
+  text-decoration: none;
+}
+.clr-inherit{
+  color: inherit;
+}

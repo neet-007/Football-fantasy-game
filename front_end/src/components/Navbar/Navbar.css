@@ -47,6 +47,9 @@
     gap: 2rem;
     order: 1;
 }
+.nav-bar_ul a.active{
+    color: var(--main-theme-light-clr);
+}
 
 @media only screen and (min-width:820px) {
     .nav-bar_nav{

@@ -10,9 +10,7 @@ function FantasyLayout() {
         <Navbar/>
         <FantasyNavbar/>
         <Suspense>
-            <Outlet>
-
-            </Outlet>
+            <Outlet/>
         </Suspense>
     </main>
   )
