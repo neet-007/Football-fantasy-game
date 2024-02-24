@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import './Navbar.css'
 import { List, X } from 'react-bootstrap-icons'
 import { NavLink } from 'react-router-dom'
+import { useMainContext } from '../../context/MainContext'
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false)

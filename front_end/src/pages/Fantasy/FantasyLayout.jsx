@@ -7,7 +7,6 @@ import FantasyNavbar from '../../components/FantasyNavbar/FantasyNavbar'
 function FantasyLayout() {
   return (
     <main>
-        <Navbar/>
         <FantasyNavbar/>
         <Suspense>
             <Outlet/>

@@ -34,19 +34,19 @@ function App() {
           <Route path='/results' element={<Results/>}/>
           <Route path='/stats' element={<Stats/>}/>
           <Route path='/tables' element={<Tables/>}/>
+          <Route path='/fantasy' element={<FantasyLayout/>}>
+            <Route path='' element={<FantasyHome/>}/>
+            <Route path='fixtures' element={<FantasyFixtures/>}/>
+            <Route path='leagues-and-cups' element={<FantasyLeaguesAndCups/>}/>
+            <Route path='points' element={<FantasyPoints/>}/>
+            <Route path='stats' element={<FantasyStats/>}/>
+            <Route path='pick-team' element={<FantasyPickTeam/>}/>
+            <Route path='transfers' element={<FantasyTransfers/>}/>
+          </Route>
         </Route>
         <Route element={<AuthLayout/>}>
           <Route path='/auth/signup' element={<SignUp/>}/>
           <Route path='/auth/login' element={<Login/>}/>
-        </Route>
-        <Route path='/fantasy' element={<FantasyLayout/>}>
-          <Route path='' element={<FantasyHome/>}/>
-          <Route path='fixtures' element={<FantasyFixtures/>}/>
-          <Route path='leagues-and-cups' element={<FantasyLeaguesAndCups/>}/>
-          <Route path='points' element={<FantasyPoints/>}/>
-          <Route path='stats' element={<FantasyStats/>}/>
-          <Route path='pick-team' element={<FantasyPickTeam/>}/>
-          <Route path='transfers' element={<FantasyTransfers/>}/>
         </Route>
         <Route path='*' element={<h1>not found</h1>}/>
       </Routes>
