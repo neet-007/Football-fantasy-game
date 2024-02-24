@@ -6,7 +6,7 @@ import {useNavigate} from 'react-router-dom'
 import TimeBox from './TimeBox/TimeBox'
 import Button from '../shared/Button/Button'
 
-function MatchResultCard({matchTime=90, homeTeam='HomeTeam', awayTeam='AwayTeam', time}) {
+function MatchResultCard({matchTime=90, homeTeam='HomeTeam', awayTeam='AwayTeam', time, homeResults, awayResults}) {
   const navigate = () => {}
   return (
     <article className={`main-theme_match-result-card match-result-card_article d-flex align-items-center justify-content-center gap-1`}>
@@ -21,7 +21,7 @@ function MatchResultCard({matchTime=90, homeTeam='HomeTeam', awayTeam='AwayTeam'
         {time ?
             <TimeBox/>
         :
-            <ResultBox/>
+            <ResultBox homeResults={homeResults} awayResults={awayResults}/>
         }
         <div className={` d-flex gap-1`}>
             <span>

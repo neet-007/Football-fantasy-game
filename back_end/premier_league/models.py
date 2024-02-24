@@ -135,6 +135,9 @@ class TeamFixtures(models.Model):
     goals_against = models.PositiveIntegerField(default=None, null=True)
     opponent = models.ForeignKey(PremierLeagueTeamBase, on_delete=models.CASCADE, related_name='team_fixtures_opponent')
 
+    class Meta:
+        ordering = ['-game_week']
+
     def save(self, *args, **kwargs) -> None:
         if self.team == self.opponent:
             raise ValidationError('team cant be oppoent team')

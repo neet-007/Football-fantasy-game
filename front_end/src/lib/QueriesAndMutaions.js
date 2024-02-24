@@ -1,5 +1,5 @@
 import {useQuery, useMutation} from '@tanstack/react-query'
-import { login, logout, register } from './axios'
+import { getPremierLeagueTable, getTeamsFixtures, getTeamsResults, login, logout, register } from './axios'
 
 export function useRegister(){
     return useMutation({
@@ -16,5 +16,26 @@ export function useLogin(){
 export function useLogout(){
     return useMutation({
         mutationFn: logout
+    })
+}
+
+export function useGetPremierLeagueTable(){
+    return useQuery({
+        queryKey: ['premier-league-teams'],
+        queryFn:getPremierLeagueTable
+    })
+}
+
+export function useGetTeamsFixtures(){
+    return useQuery({
+        queryKey: ['premier-league-fixtures'],
+        queryFn:getTeamsFixtures
+    })
+}
+
+export function useGetTeamsResults(){
+    return useQuery({
+        queryKey: ['premier-league-results'],
+        queryFn:getTeamsResults
     })
 }

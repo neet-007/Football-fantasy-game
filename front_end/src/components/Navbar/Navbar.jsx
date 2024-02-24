@@ -3,8 +3,13 @@ import './Navbar.css'
 import { List, X } from 'react-bootstrap-icons'
 import { NavLink } from 'react-router-dom'
 import { useMainContext } from '../../context/MainContext'
+import InvisibleButton from '../shared/InvisibleButton/InvisibleButton'
+import { useLogout } from '../../lib/queriesAndMutaions'
+import { CSRFToken } from '../shared/CSRFToken'
 
 function Navbar() {
+  const {isAuthenticated} = useMainContext()
+  const {mutateAsync:logout} = useLogout()
   const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef()
 
@@ -19,9 +24,16 @@ function Navbar() {
         <img className='nav-bar_nav-img' src="/src/assets/pl-logo.png"/>
         <div className='nav-bar_div'>
             <span className='nav-bar_span-user-search'>
-                <span className='cursor-pointer'>
-                    user
-                </span>
+                {isAuthenticated ?
+                    <span className='cursor-pointer'>
+                        user
+                    </span>
+                :
+                    <InvisibleButton onClick={logout}>
+                        <CSRFToken/>
+                        logout
+                    </InvisibleButton>
+                }
                 <span className='cursor-pointer'>
                     search
                 </span>

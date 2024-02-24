@@ -44,33 +44,33 @@ function FormCircle({status}){
 }
 
 function TableRow({team={position:{position:1, up:true}, club:{name:'liverpool', imgUrl:''},
-                        pl:28, w:10, l:1, d:12, gd:321, pts:10, form:['w', 'w', 'l', 'd', 'w'], next:''}}) {
+                        pl:28, wins:10, losses:1, draws:12, gd:321, pts:10, form:['w', 'w', 'l', 'd', 'w'], next:''}}) {
   return (
     <Tr className={'d-flex gap-1 width-100 cap'}>
         <PositionColumn position={team.position}/>
         <ClubColumn club={team.club}/>
         <Td>
-          {team.pl}
+          {team.matches_played}
         </Td>
         <Td>
-          {team.w}
+          {team.wins}
         </Td>
         <Td>
-          {team.d}
+          {team.draws}
         </Td>
         <Td>
-          {team.l}
+          {team.losses}
         </Td>
         <Td>
-          {team.gd}
+          {team.goals_differance}
         </Td>
         <Td className={'f-basis-20 d-flex justify-content-center gap-1'}>
-            {team.form.map((status, i) => {
+            {team.last_fiv?.split(' ').map((status, i) => {
                 return <FormCircle key={`${team.club.name + status + i}`} status={status}/>
             })}
         </Td>
         <Td>
-          {team.pts}
+          {team.points}
         </Td>
         <Td>
           {team.next}

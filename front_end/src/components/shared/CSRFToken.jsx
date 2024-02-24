@@ -1,5 +1,5 @@
 import React, {useState, useEffect}from 'react'
-import { getCSRF } from '../../../lib/axios/axios';
+import { getCsrfToken } from '../../lib/axios';;
 
 export function CSRFToken(){
     const [csrfToken, setCsrfToken] = useState('')
@@ -20,7 +20,7 @@ export function CSRFToken(){
     }
 
   useEffect(()=>{
-    getCSRF().then(() => {
+    getCsrfToken().then(() => {
         setCsrfToken(getCookie('csrftoken'))
     })
   },[])

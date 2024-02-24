@@ -2,6 +2,7 @@ import {Routes, Route} from 'react-router-dom'
 import { lazyLoad } from './utils/lazyLoad'
 import './App.css'
 import { Suspense } from 'react'
+import FixturesAndResultsBase from './pages/Info/FixturesAndResultsBase/FixturesAndResultsBase'
 
 const InfoLayout = lazyLoad('../pages/Info/InfoLayout')
 const Home = lazyLoad('../pages/Info/Home/Home')
@@ -30,8 +31,10 @@ function App() {
     <Routes>
         <Route path='' element={<InfoLayout/>}>
           <Route path='' element={<Home/>}/>
-          <Route path='/fixtures' element={<Fixtures/>}/>
-          <Route path='/results' element={<Results/>}/>
+          <Route element={<FixturesAndResultsBase/>}>
+            <Route path='/fixtures' element={<Fixtures/>}/>
+            <Route path='/results' element={<Results/>}/>
+          </Route>
           <Route path='/stats' element={<Stats/>}/>
           <Route path='/tables' element={<Tables/>}/>
           <Route path='/fantasy' element={<FantasyLayout/>}>
