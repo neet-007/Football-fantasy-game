@@ -1,5 +1,5 @@
 import {useQuery, useMutation} from '@tanstack/react-query'
-import { getPremierLeagueTable, getTeamsFixtures, getTeamsResults, login, logout, register } from './axios'
+import { getPremierLeagueTable, getStatsByCategory, getStatsDashBoard, getTeamsFixtures, getTeamsResults, login, logout, register } from './axios'
 
 export function useRegister(){
     return useMutation({
@@ -37,5 +37,19 @@ export function useGetTeamsResults(){
     return useQuery({
         queryKey: ['premier-league-results'],
         queryFn:getTeamsResults
+    })
+}
+
+export function useGetStatsDashBoard(){
+    return useQuery({
+        queryKey: ['premier-league-stats-dashboard'],
+        queryFn:getStatsDashBoard
+    })
+}
+
+export function useGetStatsByCategory({stat, team, nation, position}){
+    return useQuery({
+        queryKey: ['premier-league-stats-by-category', stat, team, nation, position],
+        queryFn: () =>  getStatsByCategory({stat, team, nation, position})
     })
 }

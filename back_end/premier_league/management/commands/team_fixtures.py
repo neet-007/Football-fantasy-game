@@ -18,6 +18,7 @@ class Command(BaseCommand):
                     teams_fixtures_objects_list.append(TeamFixtures(
                         team = base_teams_dict[item.team],
                         date = item.date,
+                        time = item.time,
                         comp = item.comp,
                         game_week = item.game_week,
                         day = item.day,

@@ -7,10 +7,10 @@ class PremierLeagueTeamBaseSerializer(ModelSerializer):
         fields = '__all__'
 
 class PremierLeagueTeamSerializer(ModelSerializer):
-    team = PremierLeagueTeamBaseSerializer(required=False, read_only=True)
+    base_team = PremierLeagueTeamBaseSerializer(required=False, read_only=True)
     class Meta:
         model = PremierLeagueTeam
-        fields = '__all__'
+        exclude = ('points_per_match', 'expected_goals_for', 'expected_goals_against', 'expected_goals_differance', 'expected_goals_differance_per_ninety')
         extra_kwargs = {
                     'name': {'required':False, 'read_only':True},
                     'team_code': {'required':False, 'read_only':True},

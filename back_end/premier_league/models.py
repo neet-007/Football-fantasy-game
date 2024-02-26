@@ -125,7 +125,8 @@ class ResultChoices(models.IntegerChoices):
 
 class TeamFixtures(models.Model):
     team = models.ForeignKey(PremierLeagueTeamBase, on_delete=models.CASCADE, related_name='team_fixtures_team')
-    date = models.DateField()
+    time = models.TimeField(db_index=True, null=True)
+    date = models.DateField(db_index=True)
     comp = models.PositiveIntegerField()
     game_week = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(38)], db_index=True)
     day = models.PositiveIntegerField(choices=DayChoices.choices, db_index=True)
@@ -136,7 +137,7 @@ class TeamFixtures(models.Model):
     opponent = models.ForeignKey(PremierLeagueTeamBase, on_delete=models.CASCADE, related_name='team_fixtures_opponent')
 
     class Meta:
-        ordering = ['-game_week']
+        ordering = ['game_week']
 
     def save(self, *args, **kwargs) -> None:
         if self.team == self.opponent:

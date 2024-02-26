@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import './Select.css'
 
 function Option({lable='label', value}){
@@ -6,13 +7,33 @@ function Option({lable='label', value}){
     )
 }
 
-function Select({options=['label', 'aaaa'], setValue=() => {}}) {
+function Select({options=['label', 'aaaa'], filter ,setValue=() => {}}) {
+  const ref = useRef()
+  console.log(ref.current?.value)
   return (
-    <select className='select_select' onChange={(e) => setValue(e.target.value)}>
+    <>
+    {
+      filter ?
+      (filter === 'team' || filter === 'position') ?
+      <select className='select_select' onChange={(e) => setValue(prev => ({...prev, [filter]:e.target.value}))}ref={ref}>
+        {options.map(option => {
+          return <Option lable={option[1]} value={option[0]}/>
+        })}
+      </select>
+      :
+      <select className='select_select' onChange={(e) => setValue(prev => ({...prev, [filter]:e.target.value}))}ref={ref}>
         {options.map(option => {
           return <Option lable={option}/>
         })}
-    </select>
+      </select>
+      :
+      <select className='select_select' onChange={(e) => setValue(e.target.value)}ref={ref}>
+        {options.map(option => {
+          return <Option lable={option}/>
+        })}
+      </select>
+    }
+    </>
   )
 }
 

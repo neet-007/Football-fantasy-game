@@ -195,6 +195,12 @@ class TeamFixture():
             return 2
 
     @property
+    def time(self):
+        if self.data['time'] == '':
+            return None
+        return self.data['time']
+
+    @property
     def team(self):
         return self.get_team_int(self.data['team'])
 
@@ -290,20 +296,21 @@ def get_teams_fixtures() -> list:
 
             for tr in fixtures_table:
                 fixture_dict = {}
-                tr_list = list(tr.findAll(name='td'))[1:9]
-                if tr_list[0].text.lower() != 'premier league':
+                tr_list = list(tr.findAll(name='td'))[:9]
+                if tr_list[1].text.lower() != 'premier league':
                     continue
 
                 fixture_dict['team'] = team
                 fixture_dict['date'] = tr.find(name='th').text
-                fixture_dict['comp'] = tr_list[0].text
-                fixture_dict['game_week'] = tr_list[1].text
-                fixture_dict['day'] = tr_list[2].text
-                fixture_dict['ground'] = tr_list[3].text
-                fixture_dict['result'] = tr_list[4].text
-                fixture_dict['gf'] = tr_list[5].text
-                fixture_dict['ga'] = tr_list[6].text
-                fixture_dict['opponent'] = tr_list[7].text
+                fixture_dict['time'] = tr_list[0].text.split('(')[0].strip()
+                fixture_dict['comp'] = tr_list[1].text
+                fixture_dict['game_week'] = tr_list[2].text
+                fixture_dict['day'] = tr_list[3].text
+                fixture_dict['ground'] = tr_list[4].text
+                fixture_dict['result'] = tr_list[5].text
+                fixture_dict['gf'] = tr_list[6].text
+                fixture_dict['ga'] = tr_list[7].text
+                fixture_dict['opponent'] = tr_list[8].text
 
                 teams_fixtures_list.append(TeamFixture(data=fixture_dict))
 
@@ -323,20 +330,21 @@ def update_teams_fixtures() -> dict:
 
             for tr in fixtures_table:
                 fixture_dict = {}
-                tr_list = list(tr.findAll(name='td'))[1:9]
-                if tr_list[0].text.lower() != 'premier league':
+                tr_list = list(tr.findAll(name='td'))[:9]
+                if tr_list[1].text.lower() != 'premier league':
                     continue
 
                 fixture_dict['team'] = team
                 fixture_dict['date'] = tr.find(name='th').text
-                fixture_dict['comp'] = tr_list[0].text
-                fixture_dict['game_week'] = tr_list[1].text
-                fixture_dict['day'] = tr_list[2].text
-                fixture_dict['ground'] = tr_list[3].text
-                fixture_dict['result'] = tr_list[4].text
-                fixture_dict['gf'] = tr_list[5].text
-                fixture_dict['ga'] = tr_list[6].text
-                fixture_dict['opponent'] = tr_list[7].text
+                fixture_dict['time'] = tr_list[0].text.split('(')[0]
+                fixture_dict['comp'] = tr_list[1].text
+                fixture_dict['game_week'] = tr_list[2].text
+                fixture_dict['day'] = tr_list[3].text
+                fixture_dict['ground'] = tr_list[4].text
+                fixture_dict['result'] = tr_list[5].text
+                fixture_dict['gf'] = tr_list[6].text
+                fixture_dict['ga'] = tr_list[7].text
+                fixture_dict['opponent'] = tr_list[8].text
 
                 team_fixtures_obj = TeamFixture(data=fixture_dict)
                 teams_fixtures_dict[f'{team_fixtures_obj.team}-{team_fixtures_obj.game_week}'] = team_fixtures_obj

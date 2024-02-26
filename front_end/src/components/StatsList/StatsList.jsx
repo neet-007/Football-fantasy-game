@@ -13,9 +13,10 @@ function StatsList({listName='name', list=[{name:'name', club:'club', number:2},
             <li className='stats-list_card'>
                 <span className='stats-list_card-text'>
                     <p>1</p>
-                    <p>{list[0].name}</p>
-                    <p>{list[0].club}</p>
-                    <p>{list[0].number}</p>
+                    <p>{list[0].first_name}</p>
+                    <p>{list[0].last_name}</p>
+                    <p>{list[0].team__name}</p>
+                    <p>{list[0][listName]}</p>
                 </span>
                 <p className='stats-list_card-img'>img</p>
             </li>
@@ -24,13 +25,14 @@ function StatsList({listName='name', list=[{name:'name', club:'club', number:2},
                         <Row className={'d-flex gap-1'}>
                             <Column className={'stats-list_player-row-col-1'}>{i + 1}</Column>
                             <Column className={'stats-list_player-row-col-2'}>
-                                <span>{player.club}</span>
+                                <span>{player.team__name}</span>
                                 <span>
-                                    <p>{player.name}</p>
-                                    <p>{player.club}</p>
+                                    <p>{player.first_name}</p>
+                                    <p>{player.last_name}</p>
+                                    <p>{player.team__name}</p>
                                 </span>
                             </Column >
-                            <Column className={'stats-list_player-row-col-3'}>{player.number}</Column>
+                            <Column className={'stats-list_player-row-col-3'}>{player[listName]}</Column>
                         </Row>
                     </li>
             })}

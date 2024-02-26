@@ -19,7 +19,7 @@ function MatchResultCard({matchTime=90, homeTeam='HomeTeam', awayTeam='AwayTeam'
             </span>
          </div>
         {time ?
-            <TimeBox/>
+            <TimeBox time={time}/>
         :
             <ResultBox homeResults={homeResults} awayResults={awayResults}/>
         }

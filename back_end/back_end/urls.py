@@ -22,5 +22,6 @@ urlpatterns = [
     path('api/auth/', include('user_auth.urls')),
     path('api/team/', include('team_management.urls')),
     path('api/league/', include('league_management.urls')),
-    path('api/premier-league/', include('premier_league.urls'))
+    path('api/premier-league/', include('premier_league.urls')),
+    path('api/player-info/', include('player_info.urls')),
 ]

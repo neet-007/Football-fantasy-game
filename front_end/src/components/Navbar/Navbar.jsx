@@ -73,6 +73,12 @@ function Navbar() {
                     </li>
                     <li className='cursor-pointer'>
                         <NavLink className={'txt-decoration clr-inherit cap'}
+                        to='/stats'>
+                            stats
+                        </NavLink>
+                    </li>
+                    <li className='cursor-pointer'>
+                        <NavLink className={'txt-decoration clr-inherit cap'}
                         to='/fantasy'>
                             fantasy
                         </NavLink>

@@ -3,6 +3,7 @@ import { lazyLoad } from './utils/lazyLoad'
 import './App.css'
 import { Suspense } from 'react'
 import FixturesAndResultsBase from './pages/Info/FixturesAndResultsBase/FixturesAndResultsBase'
+import PlayerStats from './pages/Info/Stats/PlayerStats'
 
 const InfoLayout = lazyLoad('../pages/Info/InfoLayout')
 const Home = lazyLoad('../pages/Info/Home/Home')
@@ -36,6 +37,7 @@ function App() {
             <Route path='/results' element={<Results/>}/>
           </Route>
           <Route path='/stats' element={<Stats/>}/>
+          <Route path='/stats/player/:stat' element={<PlayerStats/>}/>
           <Route path='/tables' element={<Tables/>}/>
           <Route path='/fantasy' element={<FantasyLayout/>}>
             <Route path='' element={<FantasyHome/>}/>

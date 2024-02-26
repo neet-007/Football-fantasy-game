@@ -3,12 +3,13 @@ import { CaretUpFill, CaretDownFill, Key } from 'react-bootstrap-icons'
 import Tr from '../shared/Tr/Tr'
 import Td from '../shared/Td/Td'
 
-function PositionColumn({position={position:1, up:true}}){
+function PositionColumn({position}){
     return(
         <Td className='d-flex align-items-center'>
             <span>
-                {position.position}
+                {position}
             </span>
+            {/*
             <span>
                 {position.up == true ?
                     <CaretUpFill color='green'/>
@@ -17,6 +18,7 @@ function PositionColumn({position={position:1, up:true}}){
                 :null
                 }
             </span>
+            */}
         </Td>
     )
 }
@@ -43,12 +45,12 @@ function FormCircle({status}){
     )
 }
 
-function TableRow({team={position:{position:1, up:true}, club:{name:'liverpool', imgUrl:''},
+function TableRow({team={postition:1, base_team:{name:'liverpool', imgUrl:''},
                         pl:28, wins:10, losses:1, draws:12, gd:321, pts:10, form:['w', 'w', 'l', 'd', 'w'], next:''}}) {
   return (
     <Tr className={'d-flex gap-1 width-100 cap'}>
-        <PositionColumn position={team.position}/>
-        <ClubColumn club={team.club}/>
+        <PositionColumn position={team.postition}/>
+        <ClubColumn club={team.base_team}/>
         <Td>
           {team.matches_played}
         </Td>
@@ -65,8 +67,8 @@ function TableRow({team={position:{position:1, up:true}, club:{name:'liverpool',
           {team.goals_differance}
         </Td>
         <Td className={'f-basis-20 d-flex justify-content-center gap-1'}>
-            {team.last_fiv?.split(' ').map((status, i) => {
-                return <FormCircle key={`${team.club.name + status + i}`} status={status}/>
+            {team.last_five?.split(' ').map((status, i) => {
+                return <FormCircle key={`${team.base_team.name + status + i}`} status={status}/>
             })}
         </Td>
         <Td>

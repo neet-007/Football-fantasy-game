@@ -87,3 +87,21 @@ export async function getTeamsResults(){
         console.log(error)
     }
 }
+export async function getStatsDashBoard(){
+    try {
+        let res = await axios.get('/api/player-info/players/dashboard/')
+        console.log(res.data)
+        return res.data
+    } catch (error) {
+        console.log(error)
+    }
+}
+export async function getStatsByCategory({stat, team, nation, position}){
+    try {
+        let res = await axios.get(`/api/player-info/players/stats/?${stat ? `stat=${stat}&`:''}${team ? `club=${team}&`:''}${nation ? `nation=${nation}&`:''}${position ? `position=${position}&`:''}`)
+        console.log(res.data)
+        return res.data
+    } catch (error) {
+        console.log(error)
+    }
+}

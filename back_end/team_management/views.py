@@ -1,9 +1,10 @@
-from .models import Team, GameWeekTeam
+from django.db.models import Count
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from django.contrib.auth.models import AnonymousUser
+from .models import Team, GameWeekTeam, PlayerTransfer
 from .serializers import TeamSerializer, GameWeekTeamSerializer, PlayerTransferSerializer
 # Create your views here.
 
@@ -21,6 +22,10 @@ class TeamViewSet(ModelViewSet):
         context['user'] = self.request.user
 
         return context
+
+    @action(methods=['get'], detail=False)
+    def most_valued(self, request):
+        pass
 
 class GameWeekTeamViewSet(ModelViewSet):
     queryset = GameWeekTeam.objects.all()
@@ -66,3 +71,17 @@ class GameWeekTeamViewSet(ModelViewSet):
 
         context['team_pk'] = team_pk[0]
         return context
+
+class PlayerTransferViewSet(ModelViewSet):
+    queryset = PlayerTransfer.objects.all()
+    serializer_class = PlayerTransferSerializer
+
+    @action(methods=['get'], detail=False)
+    def transfer_in(self, request):
+        qs = PlayerTransfer.objects.values('player_in').annotate(total_records=Count('id')).order_by('-total_records')[:10]
+        return Response({'stats':qs}, status=status.HTTP_200_OK)
+
+    @action(methods=['get'], detail=False)
+    def transfer_out(self, request):
+        qs = PlayerTransfer.objects.values('player_out').annotate(total_records=Count('id')).order_by('-total_records')[:10]
+        return Response({'stats':qs}, status=status.HTTP_200_OK)
