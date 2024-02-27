@@ -7,11 +7,18 @@ function FilterSection({filters, setFilters}) {
     <div>
         {Object.keys(filters).map(filter => {
           return <>
-                    <Select options={filters[filter]} setValue={setFilters} filter={filter}/>
+                    <Select options={filters[filter][0]} value={filters[filter][1]} setValue={setFilters} filter={filter}/>
                 </>
         })}
     </div>
   )
 }
 
+/*
+<select onChange={(e) => setFilters(prev => ({...prev, [filter]:e.target.value}))} value={filters[filter][1]}>
+                      {filters[filter][0].map(stat =>{
+                        return <option>{stat}</option>
+                      })}
+                    </select>
+*/
 export default FilterSection

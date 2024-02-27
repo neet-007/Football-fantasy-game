@@ -4,7 +4,7 @@ from . import views
 
 router = DefaultRouter()
 router.register('players', views.PlayerViewSet)
-
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('injuries', views.PlayerInjuriesAndBansAPIView.as_view())
 ]

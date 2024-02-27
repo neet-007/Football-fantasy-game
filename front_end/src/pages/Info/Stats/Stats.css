@@ -6,10 +6,26 @@
 .player-stats_row-container > *{
     display: flex;
     justify-content: flex-start;
-    flex-basis: 23.3%;
+    flex-basis: 100%;
 }
 .player-stats_team{
     flex-basis: 30%;
-    display: flex;
+    display: none;
     justify-content: flex-start;
+}
+.player-stats_nation{
+    display: none;
+}
+
+
+@media only screen and (min-width:800px){
+    .player-stats_row-container > *{
+        flex-basis: 23.3%;
+    }
+    .player-stats_team{
+        display: flex;
+    }
+    .player-stats_nation{
+        display: flex;
+    }
 }

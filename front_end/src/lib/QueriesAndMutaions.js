@@ -1,5 +1,5 @@
 import {useQuery, useMutation} from '@tanstack/react-query'
-import { getPremierLeagueTable, getStatsByCategory, getStatsDashBoard, getTeamsFixtures, getTeamsResults, login, logout, register } from './axios'
+import { getInjuries, getPremierLeagueTable, getStatsByCategory, getStatsDashBoard, getStatsFantasy, getTeamsFixtures, getTeamsResults, login, logout, register } from './axios'
 
 export function useRegister(){
     return useMutation({
@@ -47,9 +47,23 @@ export function useGetStatsDashBoard(){
     })
 }
 
-export function useGetStatsByCategory({stat, team, nation, position}){
+export function useGetStatsByCategory({stat, team, nation, position, sort, page}){
     return useQuery({
-        queryKey: ['premier-league-stats-by-category', stat, team, nation, position],
-        queryFn: () =>  getStatsByCategory({stat, team, nation, position})
+        queryKey: ['premier-league-stats-by-category', stat, team, nation, position, sort, page],
+        queryFn: () =>  getStatsByCategory({stat, team, nation, position, sort, page})
+    })
+}
+
+export function useGetStatsFanstasy({team, position, sort, page}){
+    return useQuery({
+        queryKey: ['premier-league-stats-fantasy', team, position, sort, page],
+        queryFn: () => getStatsFantasy({team, position, sort, page})
+    })
+}
+
+export function useGetInjuries({team, status, position, sort, page}){
+    return useQuery({
+        queryKey: ['premier-league-stats-fantasy', team, position, sort, page],
+        queryFn: () => getInjuries({team, position, sort, page})
     })
 }

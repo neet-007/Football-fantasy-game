@@ -96,9 +96,27 @@ export async function getStatsDashBoard(){
         console.log(error)
     }
 }
-export async function getStatsByCategory({stat, team, nation, position}){
+export async function getStatsByCategory({stat, team, nation, position, sort, page}){
     try {
-        let res = await axios.get(`/api/player-info/players/stats/?${stat ? `stat=${stat}&`:''}${team ? `club=${team}&`:''}${nation ? `nation=${nation}&`:''}${position ? `position=${position}&`:''}`)
+        let res = await axios.get(`/api/player-info/players/stats/?${stat ? `stat=${stat}&selected_stat=${stat}&`:''}${team ? `club=${team}&selected_club=${team}&`:''}${nation ? `nation=${nation}&selected_nation=${nation}&`:''}${position ? `position=${position}&selected_position=${position}&`:''}${sort ? `sort=${sort}&`:''}${page ? `page=${page}&`:''}`)
+        console.log(res.data)
+        return res.data
+    } catch (error) {
+        console.log(error)
+    }
+}
+export async function getStatsFantasy({team, position, sort, page}){
+    try {
+        let res = await axios.get(`/api/player-info/players/fantasy/?${team ? `club=${team}&selected_club=${team}&`:''}${position ? `position=${position}&selected_position=${position}&`:''}${sort ? `sort=${sort}&`:''}${page ? `page=${page}&`:''}`)
+        console.log(res.data)
+        return res.data
+    } catch (error) {
+        console.log(error)
+    }
+}
+export async function getInjuries({team, status, position, sort, page}){
+    try {
+        let res = await axios.get(`/api/player-info/injuries?${team ? `club=${team}&selected_club=${team}&`:''}${status ? `club=${status}&selected_club=${status}&`:''}${position ? `position=${position}&selected_position=${position}&`:''}${sort ? `sort=${sort}&`:''}${page ? `page=${page}&`:''}`)
         console.log(res.data)
         return res.data
     } catch (error) {

@@ -32,7 +32,7 @@ class PlayerInjuryAndSuspension():
 
     @property
     def player_return_date(self):
-        return self.data['return date']
+        return self.data['return_date']
 
 def get_injuries_and_suspensions() -> list[PlayerInjuryAndSuspension]:
     injuries_and_suspensions_list = []
@@ -63,9 +63,9 @@ def get_injuries_and_suspensions() -> list[PlayerInjuryAndSuspension]:
             if injury_status == 'suspended':
                 player_dict['status'] = 4
             if row.contents[3].text.lower() == 'unknown':
-                player_dict['return_data'] = None
+                player_dict['return_date'] = None
             else:
-                player_dict['return_data'] = datetime.strptime(row.contents[3].text, "%d/%m/%Y").date()
+                player_dict['return_date'] = datetime.strptime(row.contents[3].text, "%d/%m/%Y").date()
             if not 'team' in player_dict:
                 raise ValueError(f'{ row.contents[1]['title']} is not registerd')
 

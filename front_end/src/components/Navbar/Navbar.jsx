@@ -30,7 +30,6 @@ function Navbar() {
                     </span>
                 :
                     <InvisibleButton onClick={logout}>
-                        <CSRFToken/>
                         logout
                     </InvisibleButton>
                 }

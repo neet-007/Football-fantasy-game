@@ -1,0 +1,18 @@
+.fantasy-stats_row-container{
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+}
+.fantasy-stats_row-container > *{
+    display: flex;
+    justify-content: flex-start;
+    flex-basis: 23.3%;
+}
+.fantasy-stats_team{
+    flex-basis: 30%;
+    display: flex;
+    justify-content: flex-start;
+}
+.fantasy-stats_nation{
+    display: none;
+}

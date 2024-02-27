@@ -1,4 +1,5 @@
-from rest_framework.serializers import ModelSerializer, ValidationError
+from rest_framework.serializers import ModelSerializer, ValidationError, SerializerMethodField
+from premier_league.serializers import PremierLeagueTeamBaseSerializer
 from .models import Player, PlayerIjuriesAndBans
 
 class PlayerSerializer(ModelSerializer):
@@ -7,6 +8,7 @@ class PlayerSerializer(ModelSerializer):
         fields = '__all__'
 
 class PlayerInjuriesAndBansSerializer(ModelSerializer):
+    team = PremierLeagueTeamBaseSerializer()
     class Meta:
         model = PlayerIjuriesAndBans
         fields = '__all__'
