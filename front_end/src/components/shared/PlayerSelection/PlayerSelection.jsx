@@ -6,9 +6,9 @@ import PlayerSmallCard from '../PlayerSmallCard/PlayerSmallCard'
 import Row from '../Row/Row'
 import Column from '../Column/Column'
 
-function PlayerSelection({benchRow, pickTeam, transfer, children}) {
+function PlayerSelection({benchRow, pickTeam, transfer, children, ...props}) {
   return (
-    <article className='player-selection_article'>
+    <article className='player-selection_article' {...props}>
         <div className='player-selection_header'>
             {children}
         </div>

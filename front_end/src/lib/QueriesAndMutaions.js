@@ -1,5 +1,5 @@
 import {useQuery, useMutation} from '@tanstack/react-query'
-import { getInjuries, getPremierLeagueTable, getStatsByCategory, getStatsDashBoard, getStatsFantasy, getTeamsFixtures, getTeamsResults, login, logout, register } from './axios'
+import { getInjuries, getPlayersFantasy, getPremierLeagueTable, getStatsByCategory, getStatsDashBoard, getStatsFantasy, getTeamsFixtures, getTeamsResults, login, logout, register } from './axios'
 
 export function useRegister(){
     return useMutation({
@@ -58,6 +58,13 @@ export function useGetStatsFanstasy({team, position, sort, page}){
     return useQuery({
         queryKey: ['premier-league-stats-fantasy', team, position, sort, page],
         queryFn: () => getStatsFantasy({team, position, sort, page})
+    })
+}
+
+export function useGetPlayersFanstasy({team, position, sort, page}){
+    return useQuery({
+        queryKey: ['premier-league-players-fantasy', team, position, sort, page],
+        queryFn: () => getPlayersFantasy({team, position, sort, page})
     })
 }
 

@@ -70,7 +70,7 @@ class PlayerViewSet(ModelViewSet):
         return Response({'stat':page_obj.object_list, 'filters':filters, 'page':page_dict}, status=status.HTTP_200_OK)
 
     @action(methods=['get'], detail=False)
-    def fantasy(self, request):
+    def fantasy_stats(self, request):
         sort = request.GET.get('sort', 'price')
         club = request.GET.get('club')
         position = request.GET.get('position')
@@ -117,6 +117,63 @@ class PlayerViewSet(ModelViewSet):
             'position':[PlayerPositions.choices + [(-1, 'all positions')], request.GET.get('selected_position', -1)]
         }
         return Response({'stat':page_obj.object_list, 'filters':filters, 'page':page_dict}, status=status.HTTP_200_OK)
+
+    @action(methods=['get'], detail=False)
+    def fantasy_players(self, request):
+        sort = request.GET.get('sort', 'price')
+        club = request.GET.get('club')
+        position = request.GET.get('position')
+
+        qs = Player.objects.all().values('first_name', 'last_name', 'team__name', 'position', 'price', 'overall_points')
+        if club and club != '-1':
+            qs = qs.filter(team=club)
+
+        if position and position != '-1':
+            qs = qs.filter(position=position)
+
+        try:
+            qs = qs.order_by(f'-{sort}')
+        except FieldError:
+            return Response({'error':f'field:{sort} is not valid'}, status=status.HTTP_400_BAD_REQUEST)
+
+        paginator = Paginator(qs, 20)
+        page_num = request.GET.get('page', 1)
+
+        page_dict = {}
+        page_obj = paginator.get_page(page_num)
+
+        players_dict = {}
+        for player in page_obj.object_list:
+            if not PlayerPositions(player['position']).label in players_dict:
+                players_dict[PlayerPositions(player['position']).label] = [player]
+            else:
+                players_dict[PlayerPositions(player['position']).label].append(player)
+
+        try:
+            page_dict['next'] = page_obj.next_page_number()
+        except EmptyPage:
+            page_dict['next'] = -1
+
+        try:
+            page_dict['prev'] = page_obj.previous_page_number()
+        except EmptyPage:
+            page_dict['prev'] = -1
+
+        page_dict['num_of_pages'] = paginator.num_pages
+        page_dict['count'] = paginator.count
+
+        fields = []
+        for field in Player._meta.get_fields():
+            if field.name in ['first_name', 'last_name', 'nation', 'position', 'age', 'team' ,"gameweekplayer", "player_transfer_player_in","player_transfer_player_out","playerijuriesandbans","id",]:
+                continue
+            fields.append(field.name)
+
+        filters = {
+            'sort':[fields, sort],
+            'team':[TeamsChoices.choices + [(-1, 'all clubs')], request.GET.get('selected_club', -1)],
+            'position':[PlayerPositions.choices + [(-1, 'all positions')], request.GET.get('selected_position', -1)]
+        }
+        return Response({'players':players_dict, 'filters':filters, 'page':page_dict}, status=status.HTTP_200_OK)
 
 class PlayerInjuriesAndBansAPIView(APIView):
     def get(self, request, format=None):

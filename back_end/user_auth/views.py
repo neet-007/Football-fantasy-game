@@ -1,9 +1,11 @@
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from .serializers import UserModelSerializer
 import logging
 
 logger = logging.Logger(__name__)
@@ -77,5 +79,10 @@ class GetCSRFToken(APIView):
     def get(self, request):
         return Response({'success':'csfrtoken generated'}, status=status.HTTP_200_OK)
 
+class CheckUserView(APIView):
+    def post(self, request):
+        if request.user == AnonymousUser or not request.user:
+            return Response({'error':'user is not authenticated'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(UserModelSerializer(request.user).data, status=status.HTTP_200_OK)
 
 

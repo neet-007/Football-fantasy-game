@@ -21,6 +21,7 @@ const FantasyFixtures = lazyLoad('../pages/Fantasy/Fixtures/Fixtures')
 const FantasyHome = lazyLoad('../pages/Fantasy/Home/Home')
 const FantasyLeaguesAndCups = lazyLoad('../pages/Fantasy/LeaguesAndCups/LeaguesAndCups')
 const FantasyPickTeam = lazyLoad('../pages/Fantasy/PickTeam/PickTeam')
+const FantasyTeamSelection = lazyLoad('../pages/Fantasy/TeamSelection/TeamSelection')
 const FantasyPoints = lazyLoad('../pages/Fantasy/Points/Points')
 const FantasyStats = lazyLoad('../pages/Fantasy/Stats/Stats')
 const FanstayInjuries = lazyLoad('../pages/Fantasy/Injuries/Injuries')
@@ -48,6 +49,7 @@ function App() {
             <Route path='stats' element={<FantasyStats/>}/>
             <Route path='injuries' element={<FanstayInjuries/>}/>
             <Route path='pick-team' element={<FantasyPickTeam/>}/>
+            <Route path='team-selection' element={<FantasyTeamSelection/>}/>
             <Route path='transfers' element={<FantasyTransfers/>}/>
           </Route>
         </Route>

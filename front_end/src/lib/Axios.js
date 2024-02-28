@@ -107,7 +107,16 @@ export async function getStatsByCategory({stat, team, nation, position, sort, pa
 }
 export async function getStatsFantasy({team, position, sort, page}){
     try {
-        let res = await axios.get(`/api/player-info/players/fantasy/?${team ? `club=${team}&selected_club=${team}&`:''}${position ? `position=${position}&selected_position=${position}&`:''}${sort ? `sort=${sort}&`:''}${page ? `page=${page}&`:''}`)
+        let res = await axios.get(`/api/player-info/players/fantasy_stats/?${team ? `club=${team}&selected_club=${team}&`:''}${position ? `position=${position}&selected_position=${position}&`:''}${sort ? `sort=${sort}&`:''}${page ? `page=${page}&`:''}`)
+        console.log(res.data)
+        return res.data
+    } catch (error) {
+        console.log(error)
+    }
+}
+export async function getPlayersFantasy({team, position, sort, page}){
+    try {
+        let res = await axios.get(`/api/player-info/players/fantasy_players/?${team ? `club=${team}&selected_club=${team}&`:''}${position ? `position=${position}&selected_position=${position}&`:''}${sort ? `sort=${sort}&`:''}${page ? `page=${page}&`:''}`)
         console.log(res.data)
         return res.data
     } catch (error) {
