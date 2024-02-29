@@ -124,7 +124,7 @@ class PlayerViewSet(ModelViewSet):
         club = request.GET.get('club')
         position = request.GET.get('position')
 
-        qs = Player.objects.all().values('first_name', 'last_name', 'team__name', 'position', 'price', 'overall_points')
+        qs = Player.objects.all().values('id', 'first_name', 'last_name', 'team__name', 'position', 'price', 'overall_points')
         if club and club != '-1':
             qs = qs.filter(team=club)
 

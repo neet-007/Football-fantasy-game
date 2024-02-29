@@ -4,12 +4,12 @@ import SectionHeader from '../shared/SectionHeader/SectionHeader'
 import './TeamSelectionPitch.css'
 import Button from '../shared/Button/Button'
 
-function TeamSelectionPitch() {
+function TeamSelectionPitch({playersList, disabledPlayers, setDisapledPlayers}) {
   const [playersSelected, setPlayersSelected] = useState(0)
   const [moneyRemaining, setMoneyRemaining] = useState(100.00)
   return (
     <section className='cap'>
-        <PlayerSelection pickTeam>
+        <PlayerSelection teamSelection playersList={playersList} disabledPlayers={disabledPlayers} setDisabledPlayers={setDisapledPlayers}>
            <SectionHeader>
             <p>gameweek</p>
            </SectionHeader>
