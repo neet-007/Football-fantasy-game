@@ -1,6 +1,7 @@
 from .models import Team, GameWeekTeam, GameWeekPlayer, PlayerTransfer
 from user_auth.serializers import UserModelSerializer
 from player_info.serializers import PlayerSerializer
+from .models import PlayerPositions
 from rest_framework.serializers import ModelSerializer, ValidationError, ListField, DictField, IntegerField, SerializerMethodField
 
 
@@ -42,6 +43,7 @@ class TeamSerializer(ModelSerializer):
         return super().validate(attrs)
 
 class GameWeekPlayerSerializer(ModelSerializer):
+    player = PlayerSerializer()
     class Meta:
         model = GameWeekPlayer
         fields = '__all__'
@@ -52,8 +54,8 @@ class GameWeekPlayerSerializer(ModelSerializer):
 class GameWeekTeamSerializer(ModelSerializer):
     team = TeamSerializer(read_only=True, required=False)
     team_pk = IntegerField(write_only=True, required=False)
-    players_pks = ListField(child=IntegerField(), allow_empty=False, min_length=11, max_length=11, write_only=True)
-    bench_order = DictField(child=IntegerField(), allow_empty=False, write_only=True)
+    players_pks = ListField(child=ListField(child=IntegerField()), allow_empty=False, min_length=11, max_length=11, write_only=True)
+    bench_order = DictField(child=ListField(child=IntegerField()), allow_empty=False, write_only=True)
     players = SerializerMethodField(method_name='get_players')
 
     class Meta:
@@ -74,7 +76,27 @@ class GameWeekTeamSerializer(ModelSerializer):
 
     def get_players(self, obj):
         players = obj.game_week_player_game_week_team.all()
-        return GameWeekPlayerSerializer(players, many=True).data
+        player_dict = {
+            'goalkeepers':{'starter':[], 'benched':[]},
+            'defenders':{'starter':[], 'benched':[]},
+            'midfielders':{'starter':[], 'benched':[]},
+            'strikers':{'starter':[], 'benched':[]}
+        }
+        for player in players:
+            a = ''
+            if player.position == 0:
+                a = 'goalkeepers'
+            if player.position == 1:
+                a = 'defenders'
+            if player.position == 3:
+                a = 'midfielders'
+            if player.position == 4:
+                a = 'strikers'
+            if player.starter:
+                player_dict[a]['starter'].append({'id':player.player.id,'name':player.player.last_name, 'club':player.player.team.name, 'points':player.points, 'position':player.position, 'index':player.index})
+            else:
+                player_dict[a]['benched'].append({'id':player.player.id,'name':player.player.last_name, 'club':player.player.team.name, 'points':player.points, 'position':player.position, 'index':player.index})
+        return player_dict
 
 class PlayerTransferSerializer(ModelSerializer):
     player_in = PlayerSerializer(read_only=True, required=False)

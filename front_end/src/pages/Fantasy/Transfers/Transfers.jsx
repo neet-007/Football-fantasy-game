@@ -65,7 +65,7 @@ function PlayerCard({player, includedPlayers=[], disabledPlayers, setPlayersList
     else if(player.position === 3) a = 'midfielders'
     else if(player.position === 4) a = 'strikers'
     const reIndex = disabledPlayers[player.position].shift()
-
+    console.log(reIndex)
     setPlayersList(prev => {
       return {
         ...prev,
@@ -103,13 +103,13 @@ function PlayerCard({player, includedPlayers=[], disabledPlayers, setPlayersList
   )
 }
 
-function Transfers() {
+function Transferss({userTeam}) {
+  const [playersList, setPlayersList] = useState(userTeam.players)
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState()
-  const [playersList, setPlayersList] = useState({...AA})
 
-  const {data:userTeam} = useGetUserTeam()
   const {data, isLoading} = useGetPlayersFanstasy({team:filters?.team, position:filters?.position, sort:filters?.sort, page})
+
 
   const [disabledPlayers, setDisabledPlayers] = useState({0:[], 1:[], 3:[], 4:[]})
 
@@ -122,18 +122,20 @@ function Transfers() {
       return acc
     },[]))]
   },[playersList, {...disabledPlayers}])
-  useEffect(() => {
-    console.log(playersList)
-    console.log(disabledPlayers)
-  },[playersList])
+
   useEffect(()=>{
     console.log(includedPlayers)
   },[includedPlayers])
+
+  useEffect(() => {
+    console.log('disalbedPlayer')
+    console.log(disabledPlayers)
+  },[disabledPlayers])
   if (isLoading) return null
   return (
     <section className='fantasy-layout_with-side-bar'>
       <div>
-        <PlayerTransferPitch playersList={playersList} reset={()=>{console.log(AA);setPlayersList({...AA});setDisabledPlayers({0:[], 1:[], 3:[], 4:[]})}} disabledPlayers={disabledPlayers} setDisapledPlayers={setDisabledPlayers}/>
+        <PlayerTransferPitch userTeam={userTeam.team} playersList={playersList} reset={()=>{console.log(AA);setPlayersList({...AA});setDisabledPlayers({0:[], 1:[], 3:[], 4:[]})}} disabledPlayers={disabledPlayers} setDisapledPlayers={setDisabledPlayers}/>
         fixtures
       </div>
       <div>
@@ -159,6 +161,14 @@ function Transfers() {
             <PageSlider page={page} setPages={setPage} pages={data?.page.num_of_pages} next={data?.page.next} prev={data?.page.prev}/>
       </div>
     </section>
+  )
+}
+
+function Transfers(){
+  const {data, isLoading} = useGetUserTeam()
+  if (isLoading) return null
+  return(
+    <Transferss userTeam={data}/>
   )
 }
 

@@ -3,7 +3,7 @@ import './PlayerTransferPitch.css'
 import Button from '../shared/Button/Button'
 import PlayerSelection from '../shared/PlayerSelection/PlayerSelection'
 
-function PlayerTransferPitch({playersList, reset, disabledPlayers, setDisapledPlayers}) {
+function PlayerTransferPitch({userTeam, playersList, reset, disabledPlayers, setDisapledPlayers}) {
   const [playersSelected, setPlayersSelected] = useState(0)
   const [moneyRemaining, setMoneyRemaining] = useState(100.00)
   return (
@@ -14,7 +14,7 @@ function PlayerTransferPitch({playersList, reset, disabledPlayers, setDisapledPl
                 <p className='player-transfer-pitch_header-game-week-date'>dsadsadsadsadsadsad</p>
                 <span className='player-transfer-pitch_header-transfers'>
                     <p>free transfers</p>
-                    <p>2</p>
+                    <p>{userTeam.free_transfers}</p>
                 </span>
                 <span className='player-transfer-pitch_header-cost'>
                     <p>cost</p>
@@ -22,7 +22,7 @@ function PlayerTransferPitch({playersList, reset, disabledPlayers, setDisapledPl
                 </span>
                 <span className='player-transfer-pitch_header-money'>
                     <p>money remaining</p>
-                    <p>0.6</p>
+                    <p>{userTeam.bank}</p>
                 </span>
                 <Button className='player-transfer-pitch_header-auto-pick'/>
                 <Button className='player-transfer-pitch_header-reset'/>

@@ -59,7 +59,7 @@ class GameWeekTeamManager(models.Manager):
         if sum(player.position == PlayerPositions.GK for player in players_starters) + sum(player.position == PlayerPositions.GK for player in players_benched) != 2 and sum(player.position == PlayerPositions.DF for player in players_starters) + sum(player.position == PlayerPositions.DF for player in players_benched) != 5 and sum(player.position == PlayerPositions.MF for player in players_starters) + sum(player.position == PlayerPositions.MF for player in players_benched) != 5 and sum(player.position == PlayerPositions.ST for player in players_starters) + sum(player.position == PlayerPositions.ST for player in players_benched) != 3:
             raise ValidationError('players structure is as follows: 2 goalkeepers, 5 defenders, 5 midfielders, 3 strikers')
 
-    def create(self, team_pk:int, starters:list[int], bench_order:dict[int, int]):
+    def create(self, team_pk:int, starters:list[[]:int], bench_order:dict[int, []:int]):
         try:
             with transaction.atomic():
                 team = Team.objects.filter(pk=team_pk)
@@ -70,17 +70,23 @@ class GameWeekTeamManager(models.Manager):
                 if len(starters) != 11 and len(bench_order) != 4:
                     raise ValidationError('startes must be 11 and benched players must be 4')
 
+                starters_list = [starter[0] for starter in starters]
                 game_week_team = GameWeekTeam(team=team[0], game_week=GAMEWEEK)
                 game_week_team.save()
-                players_starters = Player.objects.filter(pk__in=starters)
+                players_starters = Player.objects.filter(pk__in=starters_list)
                 players_benched = Player.objects.filter(pk__in=bench_order.keys())
 
                 self.check_team_player_positions(players_starters=players_starters, players_benched=players_benched)
 
-                players_objectes = [GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=True) for player in players_starters]
-                for pk, order in bench_order.items():
+                players_objectes = []
+                i = 0
+                for player in players_starters:
+                    players_objectes.append(GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=True, index=starters[i][1]))
+                    i += 1
+                i = 0
+                for pk, list in bench_order.items():
                     player = players_benched.filter(pk=int(pk))[0]
-                    players_objectes.append(GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=False, benched_order=order))
+                    players_objectes.append(GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=False, benched_order=list[0], index=list[1]))
 
                 GameWeekPlayer.objects.bulk_create(players_objectes)
 
@@ -103,6 +109,7 @@ class GameWeekTeamPlayerBenchedOrderChoices(models.IntegerChoices):
 
 class GameWeekPlayer(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    index = models.PositiveIntegerField(unique=True, validators=[MaxValueValidator(14)])
     game_week_team = models.ForeignKey(GameWeekTeam, on_delete=models.CASCADE, related_name='game_week_player_game_week_team')
     position = models.IntegerField(choices=PlayerPositions.choices)
     starter = models.BooleanField(default=False, db_index=True)
