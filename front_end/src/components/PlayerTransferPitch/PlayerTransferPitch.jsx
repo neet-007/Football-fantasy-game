@@ -1,12 +1,14 @@
-import React from 'react'
+import React, {useState} from 'react'
 import './PlayerTransferPitch.css'
 import Button from '../shared/Button/Button'
 import PlayerSelection from '../shared/PlayerSelection/PlayerSelection'
 
-function PlayerTransferPitch() {
+function PlayerTransferPitch({playersList, reset, disabledPlayers, setDisapledPlayers}) {
+  const [playersSelected, setPlayersSelected] = useState(0)
+  const [moneyRemaining, setMoneyRemaining] = useState(100.00)
   return (
     <section>
-        <PlayerSelection transfer>
+        <PlayerSelection transfer playersList={playersList} disabledPlayers={disabledPlayers} setDisabledPlayers={setDisapledPlayers}>
             <div className='player-transfer-pitch_header cap'>
                 <p className='player-transfer-pitch_header-game-week'>game week</p>
                 <p className='player-transfer-pitch_header-game-week-date'>dsadsadsadsadsadsad</p>

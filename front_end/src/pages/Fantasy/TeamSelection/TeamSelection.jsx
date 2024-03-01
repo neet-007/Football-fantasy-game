@@ -12,6 +12,7 @@ import Td from '../../../components/shared/Td/Td'
 import InvisibleButton from '../../../components/shared/InvisibleButton/InvisibleButton'
 import Modal from '../../../components/shared/Modal/Modal'
 import Button from '../../../components/shared/Button/Button'
+import PageSlider from '../../../components/PageSlider/PageSlider'
 
 const CONDITION = {
   0:2,
@@ -59,7 +60,6 @@ function PlayerCard({player, includedPlayers=[], disabledPlayers, setPlayersList
     return setIsOpen(true)
   }
   function addPlayer(){
-    console.log('sdasd')
     let a
     if (player.position === 0) a = 'goalkeepers'
     else if(player.position === 1) a = 'defenders'
@@ -68,18 +68,14 @@ function PlayerCard({player, includedPlayers=[], disabledPlayers, setPlayersList
     const reIndex = disabledPlayers[player.position].shift()
 
     setPlayersList(prev => {
-      let foundIndex = prev[a].starter.findIndex(x => x.index === reIndex)
-      console.log(foundIndex)
-      if (foundIndex !== -1){
-        const temp = prev
-        temp[a].starter[foundIndex] = player
-        return {...temp}
-      }
-      foundIndex = prev[a].benched.findIndex(x => x.index === reIndex)
-      const temp = prev
-      temp[a].starter[foundIndex] = player
-      return {...temp}
-    })
+      return {
+        ...prev,
+        [a]: {
+          starter: prev[a].starter.map(item => (item.index === reIndex ? { ...item, id: player.id, name: player.last_name ? player.last_name : player.first_name, club: player.team__name, points: 14, position: player.position } : item)),
+          benched: prev[a].benched.map(item => (item.index === reIndex ? { ...item, id: player.id, name: player.last_name ? player.last_name : player.first_name, club: player.team__name, points: 14, position: player.position } : item))
+        }
+      };
+    });
   }
   return(
       <Tr className='d-flex'>
@@ -111,22 +107,26 @@ function PlayerCard({player, includedPlayers=[], disabledPlayers, setPlayersList
 function TeamSelection() {
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState()
-  const [playersList, setPlayersList] = useState(AA)
+  const [playersList, setPlayersList] = useState({...AA})
   const {data, isLoading} = useGetPlayersFanstasy({team:filters?.team, position:filters?.position, sort:filters?.sort, page})
-  console.log(playersList)
+
   const [disabledPlayers, setDisabledPlayers] = useState({0:[], 1:[], 3:[], 4:[]})
-  console.log(disabledPlayers)
+
   const includedPlayers = useMemo(() => {
-    const playerArr = Object.values(AA).flatMap(({ starter, benched }) => [...starter, ...benched]);
-    const a = playerArr.filter(player => !disabledPlayers[player.position].indexOf(player.index) !== -1)
+    const playerArr = Object.values(playersList).flatMap(({ starter, benched }) => [...starter, ...benched]);
+    const a = playerArr.filter(player => disabledPlayers[player.position].indexOf(player.index) === -1)
     return [a.flatMap(player => player.id), (a.reduce((acc, curr) => {
-      const {position} = curr
-      acc[position] = (acc[position] || 0) + 1;
+      acc[curr.position] = (acc[curr.position] || 0) + 1;
 
       return acc
-    },[]))]
+    },[])), a.reduce((acc, curr) => {
+      acc[curr.club] = (acc[curr.club] || 0) + 1;
+    },[])]
   },[playersList, {...disabledPlayers}])
-
+  useEffect(() => {
+    console.log(playersList)
+    console.log(disabledPlayers)
+  },[playersList])
   useEffect(()=>{
     console.log(includedPlayers)
   },[includedPlayers])
@@ -134,7 +134,7 @@ function TeamSelection() {
   return (
     <section className='fantasy-layout_with-side-bar'>
       <div>
-        <TeamSelectionPitch playersList={playersList} disabledPlayers={disabledPlayers} setDisapledPlayers={setDisabledPlayers}/>
+        <TeamSelectionPitch playersList={playersList} reset={()=>{console.log(AA);setPlayersList({...AA});setDisabledPlayers({0:[], 1:[], 3:[], 4:[]})}} disabledPlayers={disabledPlayers} setDisapledPlayers={setDisabledPlayers}/>
         fixtures
       </div>
       <div>
@@ -157,6 +157,7 @@ function TeamSelection() {
                   </table>
               </div>
             })}
+            <PageSlider page={page} setPages={setPage} pages={data?.page.num_of_pages} next={data?.page.next} prev={data?.page.prev}/>
       </div>
     </section>
   )

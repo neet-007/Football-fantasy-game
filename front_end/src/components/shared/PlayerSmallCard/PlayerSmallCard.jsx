@@ -9,8 +9,6 @@ function PlayerSmallCard({name='salah', club='liverpool', points=30, gameweek=22
     if (e.target.id === 'modal-overlay') return setIsOpen(false)
     return setIsOpen(true)
   }
-  console.log(index)
-  if(index === 13 )console.log(disabledPlayers[position].indexOf(index))
   if (position === undefined) console.log(name)
   return (
     <article className='player-small-card_article' onClick={handleClick}>

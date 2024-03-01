@@ -132,3 +132,12 @@ export async function getInjuries({team, status, position, sort, page}){
         console.log(error)
     }
 }
+export async function getUserTeam(){
+    try {
+        let res = await axios.get('/api/team/game-week-team/user_team/')
+        console.log(res.data)
+        return res.data
+    } catch (error) {
+        console.log(error)
+    }
+}

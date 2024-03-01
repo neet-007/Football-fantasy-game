@@ -4,7 +4,7 @@ import SectionHeader from '../shared/SectionHeader/SectionHeader'
 import './TeamSelectionPitch.css'
 import Button from '../shared/Button/Button'
 
-function TeamSelectionPitch({playersList, disabledPlayers, setDisapledPlayers}) {
+function TeamSelectionPitch({playersList, reset, disabledPlayers, setDisapledPlayers}) {
   const [playersSelected, setPlayersSelected] = useState(0)
   const [moneyRemaining, setMoneyRemaining] = useState(100.00)
   return (
@@ -23,7 +23,7 @@ function TeamSelectionPitch({playersList, disabledPlayers, setDisapledPlayers}) 
             <div className='f-grow-1 d-flex f-di-column'>
                 <p className='align-self-center'>money remaining</p>
                 <p className='align-self-center'>{moneyRemaining}</p>
-                <Button childern='' className={'cap'}>reset</Button>
+                <Button childern='' className={'cap'} onClick={reset}>reset</Button>
             </div>
            </div>
         </PlayerSelection>
