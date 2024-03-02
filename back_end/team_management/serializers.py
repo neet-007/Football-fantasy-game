@@ -93,9 +93,9 @@ class GameWeekTeamSerializer(ModelSerializer):
             if player.position == 4:
                 a = 'strikers'
             if player.starter:
-                player_dict[a]['starter'].append({'id':player.player.id,'name':player.player.last_name, 'club':player.player.team.name, 'points':player.points, 'position':player.position, 'index':player.index})
+                player_dict[a]['starter'].append({'id':player.player.id,'name':player.player.last_name, 'club':player.player.team.name, 'points':player.points, 'position':player.position, 'index':player.index, 'price':player.player.price})
             else:
-                player_dict[a]['benched'].append({'id':player.player.id,'name':player.player.last_name, 'club':player.player.team.name, 'points':player.points, 'position':player.position, 'index':player.index})
+                player_dict[a]['benched'].append({'id':player.player.id,'name':player.player.last_name, 'club':player.player.team.name, 'points':player.points, 'position':player.position, 'index':player.index, 'price':player.player.price})
         return player_dict
 
 class PlayerTransferSerializer(ModelSerializer):

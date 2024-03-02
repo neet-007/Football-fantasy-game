@@ -2,6 +2,7 @@
     display: grid;
     grid-template-areas:
     'game-week game-week game-week '
+    'transfer-warnings transfer-warnings transfer-warnings'
     'game-week-date game-week-date game-week-date'
     'transfers cost money'
     'auto-pick . reset'
@@ -11,6 +12,11 @@
     display: flex;
     justify-content: center;
     grid-area: game-week;
+}
+.player-transfer-pitch-header-transfer-warning{
+    display: flex;
+    justify-content: center;
+    grid-area: transfer-warnings;
 }
 .player-transfer-pitch_header-game-week-date{
     display: flex;
@@ -55,6 +61,7 @@
     .player-transfer-pitch_header{
         grid-template-areas:
         'game-week game-week game-week '
+        'transfer-warnings transfer-warnings transfer-warnings'
         'game-week-date game-week-date game-week-date'
         'transfers cost money'
         'auto-pick wild-card reset';
