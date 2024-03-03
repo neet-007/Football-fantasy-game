@@ -6,8 +6,9 @@ import PlayerSmallCard from '../PlayerSmallCard/PlayerSmallCard'
 import Row from '../Row/Row'
 import Column from '../Column/Column'
 
-function PlayerSelection({benchRow, pickTeam, transfer, teamSelection, playersList, disabledPlayers, togglePitchPlayer, setTransferDetails, team3Plus, children, ...props}) {
-  return (
+function PlayerSelection({benchRow, pickTeam, transfer, teamSelection, playersList, disabledPlayers, togglePitchPlayer, setTransferDetails, togglePickTeam, team3Plus, children, ...props}) {
+    console.log(playersList.captins)
+    return (
     <article className='player-selection_article' {...props}>
         <div className='player-selection_header'>
             {children}
@@ -21,55 +22,55 @@ function PlayerSelection({benchRow, pickTeam, transfer, teamSelection, playersLi
             <span className='player-selection_pitch-goal-keeper-row'>
                 {
                     playersList.goalkeepers.starter.map(player => {
-                        return <PlayerSmallCard player={player} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} team3Plus={team3Plus}/>
+                        return <PlayerSmallCard pickTeam player={player} captin={playersList.captins.captin === player.id} viceCaptin={playersList.captins.vice_captin === player.id} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} team3Plus={team3Plus}/>
                     })
                 }
                 {(transfer || teamSelection) &&
                     playersList.goalkeepers.benched.map(player => {
-                        return <PlayerSmallCard player={player} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} team3Plus={team3Plus}/>
+                        return <PlayerSmallCard player={player} captin={playersList.captins.captin === player.id} viceCaptin={playersList.captins.vice_captin === player.id} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} team3Plus={team3Plus}/>
                     })
                 }
             </span>
             <span className='player-selection_pitch-defenders-row'>
                 {
                     playersList.defenders.starter.map(player => {
-                        return <PlayerSmallCard player={player} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} team3Plus={team3Plus}/>
+                        return <PlayerSmallCard pickTeam player={player} captin={playersList.captins.captin === player.id} viceCaptin={playersList.captins.vice_captin === player.id} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} team3Plus={team3Plus}/>
                     })
                 }
                 {(transfer || teamSelection) &&
                     playersList.defenders.benched.map(player => {
-                        return <PlayerSmallCard player={player} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} team3Plus={team3Plus}/>
+                        return <PlayerSmallCard player={player} captin={playersList.captins.captin === player.id} viceCaptin={playersList.captins.vice_captin === player.id} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} team3Plus={team3Plus}/>
                     })
                 }
             </span>
             <span className='player-selection_pitch-midfielders-row'>
                 {
                     playersList.midfielders.starter.map(player => {
-                        return <PlayerSmallCard player={player} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} team3Plus={team3Plus}/>
+                        return <PlayerSmallCard pickTeam player={player} captin={playersList.captins.captin === player.id} viceCaptin={playersList.captins.vice_captin === player.id} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} team3Plus={team3Plus}/>
                     })
                 }
                 {(transfer || teamSelection) &&
                     playersList.midfielders.benched.map(player => {
-                        return <PlayerSmallCard player={player} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} team3Plus={team3Plus}/>
+                        return <PlayerSmallCard player={player} captin={playersList.captins.captin === player.id} viceCaptin={playersList.captins.vice_captin === player.id} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} team3Plus={team3Plus}/>
                     })
                 }
             </span>
             <span className='player-selection_pitch-strikers-row'>
                 {
                     playersList.strikers.starter.map(player => {
-                        return <PlayerSmallCard player={player} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} team3Plus={team3Plus}/>
+                        return <PlayerSmallCard pickTeam player={player} captin={playersList.captins.captin === player.id} viceCaptin={playersList.captins.vice_captin === player.id} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} team3Plus={team3Plus}/>
                     })
                 }
                 {(transfer || teamSelection) &&
                     playersList.strikers.benched.map(player => {
-                        return <PlayerSmallCard player={player} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} team3Plus={team3Plus}/>
+                        return <PlayerSmallCard player={player} captin={playersList.captins.captin === player.id} viceCaptin={playersList.captins.vice_captin === player.id} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} team3Plus={team3Plus}/>
                     })
                 }
             </span>
             <span className={`player-selection_pitch-bench-row ${benchRow ? 'player-selection_pitch-bench-row-show' : 'player-selection_pitch-bench-row-hide'}`}>
                 {
-                    playersList.goalkeepers.benched.concat(playersList.goalkeepers.benched).concat(playersList.midfielders.benched).concat(playersList.strikers.benched).map(player => {
-                        return <PlayerSmallCard player={player} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} team3Plus={team3Plus}/>
+                    playersList.goalkeepers.benched.concat(playersList.midfielders.benched).concat(playersList.strikers.benched).sort((a,b) => a.benched_order - b.benched_order).map(player => {
+                        return <PlayerSmallCard pickTeam player={player} captin={playersList.captins.captin === player.id} viceCaptin={playersList.captins.vice_captin === player.id} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} team3Plus={team3Plus}/>
                     })
                 }
             </span>

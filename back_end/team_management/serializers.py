@@ -80,7 +80,8 @@ class GameWeekTeamSerializer(ModelSerializer):
             'goalkeepers':{'starter':[], 'benched':[]},
             'defenders':{'starter':[], 'benched':[]},
             'midfielders':{'starter':[], 'benched':[]},
-            'strikers':{'starter':[], 'benched':[]}
+            'strikers':{'starter':[], 'benched':[]},
+            'captins':{'captin':None, 'vice_captin':None}
         }
         for player in players:
             a = ''
@@ -92,10 +93,17 @@ class GameWeekTeamSerializer(ModelSerializer):
                 a = 'midfielders'
             if player.position == 4:
                 a = 'strikers'
+
+            if player.captin == True:
+                player_dict['captins']['captin'] = player.player.pk
+
+            if player.vice_captin == False:
+                player_dict['captins']['vice_captin'] = player.player.pk
+
             if player.starter:
-                player_dict[a]['starter'].append({'id':player.player.id,'name':player.player.last_name, 'club':player.player.team.name, 'points':player.points, 'position':player.position, 'index':player.index, 'price':player.player.price})
+                player_dict[a]['starter'].append({'id':player.player.id,'name':player.player.last_name, 'club':player.player.team.name, 'points':player.points, 'position':player.position, 'index':player.index, 'price':player.player.price, 'captin':player.captin, 'vice_captin':player.vice_captin, 'benched_order':player.benched_order})
             else:
-                player_dict[a]['benched'].append({'id':player.player.id,'name':player.player.last_name, 'club':player.player.team.name, 'points':player.points, 'position':player.position, 'index':player.index, 'price':player.player.price})
+                player_dict[a]['benched'].append({'id':player.player.id,'name':player.player.last_name, 'club':player.player.team.name, 'points':player.points, 'position':player.position, 'index':player.index, 'price':player.player.price, 'captin':player.captin, 'vice_captin':player.vice_captin, 'benched_order':player.benched_order})
         return player_dict
 
 class PlayerTransferSerializer(ModelSerializer):

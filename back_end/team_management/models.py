@@ -59,7 +59,7 @@ class GameWeekTeamManager(models.Manager):
         if sum(player.position == PlayerPositions.GK for player in players_starters) + sum(player.position == PlayerPositions.GK for player in players_benched) != 2 and sum(player.position == PlayerPositions.DF for player in players_starters) + sum(player.position == PlayerPositions.DF for player in players_benched) != 5 and sum(player.position == PlayerPositions.MF for player in players_starters) + sum(player.position == PlayerPositions.MF for player in players_benched) != 5 and sum(player.position == PlayerPositions.ST for player in players_starters) + sum(player.position == PlayerPositions.ST for player in players_benched) != 3:
             raise ValidationError('players structure is as follows: 2 goalkeepers, 5 defenders, 5 midfielders, 3 strikers')
 
-    def create(self, team_pk:int, starters:list[[]:int], bench_order:dict[int, []:int]):
+    def create(self, team_pk:int, starters:list[[]:int], bench_order:dict[int, []:int], captins:dict[str, int]):
         try:
             with transaction.atomic():
                 team = Team.objects.filter(pk=team_pk)
@@ -80,14 +80,23 @@ class GameWeekTeamManager(models.Manager):
 
                 players_objectes = []
                 i = 0
+                captin = False
+                vice_captin = True
                 for player in players_starters:
-                    players_objectes.append(GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=True, index=starters[i][1]))
+                    if captins['captin'] == player.pk and not captin:
+                        players_objectes.append(GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=True, index=starters[i][1], captin=True))
+                    elif captins['vice'] == player.pk and not vice_captin:
+                        players_objectes.append(GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=True, index=starters[i][1], vice_captin=False))
+                    else:
+                        players_objectes.append(GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=True, index=starters[i][1]))
                     i += 1
                 i = 0
                 for pk, list in bench_order.items():
                     player = players_benched.filter(pk=int(pk))[0]
                     players_objectes.append(GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=False, benched_order=list[0], index=list[1]))
 
+                if not captin or not vice_captin:
+                    raise ValidationError('a team must have a captain and vice captain')
                 GameWeekPlayer.objects.bulk_create(players_objectes)
 
                 return game_week_team
@@ -113,8 +122,15 @@ class GameWeekPlayer(models.Model):
     game_week_team = models.ForeignKey(GameWeekTeam, on_delete=models.CASCADE, related_name='game_week_player_game_week_team')
     position = models.IntegerField(choices=PlayerPositions.choices)
     starter = models.BooleanField(default=False, db_index=True)
+    captin = models.BooleanField(default=False, blank=True)
+    vice_captin = models.BooleanField(default=False, blank=True)
     benched_order = models.IntegerField(default=None, null=True, choices=GameWeekTeamPlayerBenchedOrderChoices.choices, blank=True)
     points = models.IntegerField(default=0, db_index=True, blank=True)
+
+    def save(self, *args, **kwargs) -> None:
+        if self.captin and self.vice_captin:
+            return ValidationError('player cant be captin and vice captin')
+        return super().save(*args, **kwargs)
 
 class PlayerTransferManager(models.Manager):
     def create(self, player_in_pk, player_out_pk, team) -> 'PlayerTransfer':

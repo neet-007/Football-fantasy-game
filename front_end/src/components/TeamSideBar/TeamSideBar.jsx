@@ -5,25 +5,25 @@ import SectionHeader from '../shared/SectionHeader/SectionHeader'
 import LeaguesDetails from '../LeaguesDetails/LeaguesDetails'
 import { Link } from 'react-router-dom'
 
-function TeamSideBar() {
+function TeamSideBar({userTeam}) {
   return (
     <div>
         <article className='fantasy-layout_side-bar-section cap'>
             <div className='d-flex justify-content-between'>
                 <span>
-                    <p>player name</p>
-                    <p>team name</p>
+                    <p>{userTeam.user.name}</p>
+                    <p>{userTeam.name}</p>
                 </span>
                 <span>county</span>
             </div>
           <SectionHeader>points/ranking</SectionHeader>
           <Row className={'d-flex justify-content-between'}>
             <Column>overall points</Column>
-            <Column>213</Column>
+            <Column>{userTeam.overall_points}</Column>
           </Row>
           <Row className={'d-flex justify-content-between'}>
             <Column>overall ranking</Column>
-            <Column>321</Column>
+            <Column>{userTeam.overall_rank}</Column>
           </Row>
           <Row className={'d-flex justify-content-between'}>
             <Column>total players</Column>
@@ -43,7 +43,7 @@ function TeamSideBar() {
           <SectionHeader>transfers</SectionHeader>
           <Row className={'d-flex justify-content-between'}>
             <Column>gameweek transfers</Column>
-            <Column>213</Column>
+            <Column>{userTeam.game_week_transfers_made}</Column>
           </Row>
           <Row className={'d-flex justify-content-between'}>
             <Column>total transfers</Column>
@@ -53,11 +53,11 @@ function TeamSideBar() {
           <SectionHeader>finance</SectionHeader>
           <Row className={'d-flex justify-content-between'}>
             <Column>squad value</Column>
-            <Column>213</Column>
+            <Column>{userTeam.team_value}</Column>
           </Row>
           <Row className={'d-flex justify-content-between'}>
             <Column>in the bank</Column>
-            <Column>321</Column>
+            <Column>{userTeam.bank}</Column>
           </Row>
         </article>
         <article className='fantasy-layout_side-bar-section cap'>
