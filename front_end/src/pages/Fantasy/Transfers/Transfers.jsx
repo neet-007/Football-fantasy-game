@@ -181,6 +181,9 @@ function Transferss({userTeam}) {
     setTransferDetails({freeTransfers:userTeam.team.free_transfers, cost:0, moneyRemaining:parseFloat(userTeam.team.bank), playersTransferd:{}})
   }
 
+  function makeTransfers(){
+    
+  }
   function team3Plus(team){
     if (includedPlayers[2].indexOf(team) === -1) return false
     return true

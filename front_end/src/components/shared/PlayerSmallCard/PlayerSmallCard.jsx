@@ -13,7 +13,7 @@ function PlayerSmallCard({player, disabledPlayers, togglePitchPlayer, team3Plus}
 
   return (
     <article className={`player-small-card_article ${team3Plus(player.club) ? 'backgroundColor-red':''}`} onClick={handleClick}>
-        <img className='player-small-card_img' src={`${ disabledPlayers[player.position].indexOf(player.index) === -1 ? `/src/assets/${player.club}-shirt.webp` : '/src/assets/none-shirt.webp'}`} alt="" />
+        <img className='player-small-card_img' src={`${disabledPlayers[player.position].indexOf(player.index) === -1 ? `/src/assets/${player.club}-shirt.webp` : '/src/assets/none-shirt.webp'}`} alt="" />
         <div className='player-small-card_name-div'>{player.name}</div>
         <div className='player-small-card_div'>
             <span>{}</span>

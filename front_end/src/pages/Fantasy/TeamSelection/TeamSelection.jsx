@@ -23,37 +23,37 @@ const CONDITION = {
 
 const AA = {
   goalkeepers: {
-      starter: [{ index: 0, id:2, name: 'alissson', club: 'liverpool', points: 11, position:0 }],
-      benched: [{ index: 1, id:38, name: 'edenrson', club: 'liverpool', points: 11, position:0 }]
+      starter: [{ index: 0, id:undefined, name: undefined, club: undefined, points: undefined, position:0 }],
+      benched: [{ index: 1, id:undefined, name: undefined, club: undefined, points: undefined, position:0 }]
   },
   defenders: {
       starter: [
-          { index: 2, id:5, name: 'arnoled', club: 'liverpool', points: 11, position:1 },
-          { index: 3, id:205, name: 'trpieer', club: 'liverpool', points: 11, position:1 },
-          { index: 4, id:139, name: 'cash', club: 'liverpool', points: 11, position:1 },
-          { index: 5, id:67, name: 'saliba', club: 'liverpool', points: 11, position:1 }
+          { index: 2, id:undefined, name: undefined, club: undefined, points: undefined, position:1 },
+          { index: 3, id:undefined, name: undefined, club: undefined, points: undefined, position:1 },
+          { index: 4, id:undefined, name: undefined, club: undefined, points: undefined, position:1 },
+          { index: 5, id:undefined, name: undefined, club: undefined, points: undefined, position:1 },
       ],
-      benched: [{ index: 6, id:41, name: 'guihe', club: 'liverpool', points: 11, position:1 }]
+      benched: [{ index: 6, id:undefined, name: undefined, club: undefined, points: undefined, position:1 }]
   },
   midfielders: {
       starter: [
-          { index: 7, id:3, name: 'salah', club: 'liverpool', points: 11, position:3 },
-          { index: 8, id:44, name: 'deburin', club: 'liverpool', points: 11, position:3 },
-          { index: 9, id:69, name: 'saka', club: 'liverpool', points: 11, position:3 },
-          { index: 10, id:70, name: 'odegard', club: 'liverpool', points: 11, position:3 }
+          { index: 7, id:undefined, name: undefined, club: undefined, points: undefined, position:3 },
+          { index: 8, id:undefined, name: undefined, club: undefined, points: undefined, position:3 },
+          { index: 9, id:undefined, name: undefined, club: undefined, points: undefined, position:3 },
+          { index: 10, id:undefined, name: undefined, club: undefined, points: undefined, position:3 },
       ],
-      benched: [{ index: 11, id:65, name: 'rashford', club: 'liverpool', points: 11, position:3 }]
+      benched: [{ index: 11, id:undefined, name: undefined, club: undefined, points: undefined, position:3 }]
   },
   strikers: {
       starter: [
-          { index: 12, id:54, name: 'haaland', club: 'liverpool', points: 11, position:4 },
-          { index: 13, id:16, name: 'houjland', club: 'liverpool', points: 11, position:4 }
+          { index: 12, id:undefined, name: undefined, club: undefined, points: undefined, position:4 },
+          { index: 13, id:undefined, name: undefined, club: undefined, points: undefined, position:4 },
       ],
-      benched: [{ index: 14, id:1, name: 'watkins', club: 'liverpool', points: 11, position:4 }]
+      benched: [{ index: 14, id:undefined, name: undefined, club: undefined, points: undefined, position:4 },]
   }
 }
 
-function PlayerCard({player, includedPlayers=[], disabledPlayers, setPlayersList}){
+function PlayerCard({player, includedPlayers=[], disabledPlayers, setPlayersList, setSelectionDetails}){
   const [isOpen, setIsOpen] = useState(false)
   function handleClick(e){
     if (e.target.id === 'modal-overlay') return setIsOpen(false)
@@ -71,12 +71,17 @@ function PlayerCard({player, includedPlayers=[], disabledPlayers, setPlayersList
       return {
         ...prev,
         [a]: {
-          starter: prev[a].starter.map(item => (item.index === reIndex ? { ...item, id: player.id, name: player.last_name ? player.last_name : player.first_name, club: player.team__name, points: 14, position: player.position } : item)),
-          benched: prev[a].benched.map(item => (item.index === reIndex ? { ...item, id: player.id, name: player.last_name ? player.last_name : player.first_name, club: player.team__name, points: 14, position: player.position } : item))
+          starter: prev[a].starter.map(item => (item.index === reIndex ? { ...item, id: player.id, name: player.last_name ? player.last_name : player.first_name, club: player.team__name, points: 14, position: player.position, price:player.price } : item)),
+          benched: prev[a].benched.map(item => (item.index === reIndex ? { ...item, id: player.id, name: player.last_name ? player.last_name : player.first_name, club: player.team__name, points: 14, position: player.position, price:player.price } : item))
         }
       };
     });
+    setSelectionDetails(prev => ({
+      ...prev, ['money']:prev.money - player.price,
+               ['players']:prev.players + 1
+    }))
   }
+
   return(
       <Tr className='d-flex'>
         <Td className={`f-basis-70 ${includedPlayers[0].indexOf(player.id) !== -1 ? 'backgroundColor-red': ''}`}>
@@ -104,40 +109,13 @@ function PlayerCard({player, includedPlayers=[], disabledPlayers, setPlayersList
   )
 }
 
-function TeamSelection() {
+function TransfersFilters({includedPlayers, disabledPlayers, setPlayersList, setSelectionDetails}){
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState()
-  const [playersList, setPlayersList] = useState({...AA})
   const {data, isLoading} = useGetPlayersFanstasy({team:filters?.team, position:filters?.position, sort:filters?.sort, page})
-
-  const [disabledPlayers, setDisabledPlayers] = useState({0:[], 1:[], 3:[], 4:[]})
-
-  const includedPlayers = useMemo(() => {
-    const playerArr = Object.values(playersList).flatMap(({ starter, benched }) => [...starter, ...benched]);
-    const a = playerArr.filter(player => disabledPlayers[player.position].indexOf(player.index) === -1)
-    return [a.flatMap(player => player.id), (a.reduce((acc, curr) => {
-      acc[curr.position] = (acc[curr.position] || 0) + 1;
-
-      return acc
-    },[])), a.reduce((acc, curr) => {
-      acc[curr.club] = (acc[curr.club] || 0) + 1;
-    },[])]
-  },[playersList, {...disabledPlayers}])
-  useEffect(() => {
-    console.log(playersList)
-    console.log(disabledPlayers)
-  },[playersList])
-  useEffect(()=>{
-    console.log(includedPlayers)
-  },[includedPlayers])
   if (isLoading) return null
-  return (
-    <section className='fantasy-layout_with-side-bar'>
-      <div>
-        <TeamSelectionPitch playersList={playersList} reset={()=>{console.log(AA);setPlayersList({...AA});setDisabledPlayers({0:[], 1:[], 3:[], 4:[]})}} disabledPlayers={disabledPlayers} setDisapledPlayers={setDisabledPlayers}/>
-        fixtures
-      </div>
-      <div>
+  return(
+    <div>
         <PlayerSelectionFilter filters={data?.filters} setFilters={setFilters}/>
         {Object.keys(data?.players).map(section => {
           return <div>
@@ -151,7 +129,7 @@ function TeamSelection() {
                     </Thead>
                     <Tbody>
                       {data?.players[section].map(player => {
-                        return <PlayerCard player={player} includedPlayers={includedPlayers} disabledPlayers={disabledPlayers} setPlayersList={setPlayersList}/>
+                        return <PlayerCard player={player} includedPlayers={includedPlayers} disabledPlayers={disabledPlayers} setPlayersList={setPlayersList} setSelectionDetails={setSelectionDetails}/>
                       })}
                     </Tbody>
                   </table>
@@ -159,6 +137,79 @@ function TeamSelection() {
             })}
             <PageSlider page={page} setPages={setPage} pages={data?.page.num_of_pages} next={data?.page.next} prev={data?.page.prev}/>
       </div>
+  )
+}
+
+function TeamSelection() {
+  const [playersList, setPlayersList] = useState(AA)
+  const [disabledPlayers, setDisabledPlayers] = useState({0:[0, 1], 1:[2, 3, 4, 5, 6], 3:[7, 8, 9, 10, 11], 4:[12, 13, 14]})
+  const [selectionDetails, setSelectionDetails] = useState({money:100.00, players:0})
+
+  const includedPlayers = useMemo(() => {
+    const playerArr = Object.values(playersList).flatMap(({ starter, benched }) => [...starter, ...benched]);
+    const a = playerArr.filter(player => disabledPlayers[player.position].indexOf(player.index) === -1)
+    const teamsCount = a.reduce((acc, curr) => {
+      acc[curr.club] = (acc[curr.club] || 0) + 1;
+      return acc
+    },{})
+    const plus3Teams = Object.keys(teamsCount).filter(x => teamsCount[x] > 3);
+    return [a.flatMap(player => player.id), (a.reduce((acc, curr) => {
+      acc[curr.position] = (acc[curr.position] || 0) + 1;
+      return acc
+      },[])),
+      plus3Teams]
+  },[playersList, {...disabledPlayers}])
+
+  useEffect(() => {
+    console.log(playersList)
+  },[playersList])
+
+  function togglePitchPlayer(restore, position, index, price){
+    if (restore){
+      setDisabledPlayers(prev => ({...prev, [position]:prev[position].filter(x => x !== index).sort((a,b) => a - b)}))
+      setSelectionDetails(prev => ({...prev, ['money']:prev['money'] - price, ['players']:prev['players'] + 1}))
+    }
+    else{
+      let a
+      if (position === 0) a = 'goalkeepers'
+      else if(position === 1) a = 'defenders'
+      else if(position === 3) a = 'midfielders'
+      else if(position === 4) a = 'strikers'
+      setDisabledPlayers(prev => ({...prev, [position]:[...prev[position], index].sort((a,b) => a-b)}))
+      setSelectionDetails(prev => ({...prev, ['money']:prev.money + price, ['players']:prev.players - 1}))
+      setPlayersList(prev => {
+        return {
+          ...prev,
+          [a]: {
+            starter: prev[a].starter.map(item => (item.index === index ? { ...item, index:index , id: undefined, name: undefined, club: undefined, points: undefined, position: position, price:undefined } : item)),
+            benched: prev[a].benched.map(item => (item.index === index ? { ...item, index:index , id: undefined, name: undefined, club: undefined, points: undefined, position: position, price:undefined } : item))
+          }
+        };
+      });
+    }
+  }
+
+  function reset(){
+    setPlayersList(AA);
+    setDisabledPlayers({0:[0, 1], 1:[2, 3, 4, 5, 6], 3:[7, 8, 9, 10, 11], 4:[12 ,13 ,14]});
+    setSelectionDetails({money:100.00, players:0})
+  }
+
+  function makeTransfers(){
+    
+  }
+  function team3Plus(team){
+    if (includedPlayers[2].indexOf(team) === -1) return false
+    return true
+  }
+
+  return (
+    <section className='fantasy-layout_with-side-bar'>
+      <div>
+        <TeamSelectionPitch playersList={playersList} reset={reset} disabledPlayers={disabledPlayers} setDisapledPlayers={setDisabledPlayers} selectionDetails={selectionDetails} togglePitchPlayer={togglePitchPlayer} team3Plus={team3Plus}/>
+        fixtures
+      </div>
+      <TransfersFilters includedPlayers={includedPlayers} disabledPlayers={disabledPlayers} setPlayersList={setPlayersList} setSelectionDetails={setSelectionDetails}/>
     </section>
   )
 }
