@@ -141,3 +141,13 @@ export async function getUserTeam(){
         console.log(error)
     }
 }
+export async function postPickTeam({team}){
+    try {
+        console.log(team)
+        let res = await axios.post('/api/team/game-week-team/', team, config)
+        console.log(res.data)
+        return res.data
+    } catch (error) {
+        console.log(error)
+    }
+}

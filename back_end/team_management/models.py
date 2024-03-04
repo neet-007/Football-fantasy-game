@@ -85,8 +85,10 @@ class GameWeekTeamManager(models.Manager):
                 for player in players_starters:
                     if captins['captin'] == player.pk and not captin:
                         players_objectes.append(GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=True, index=starters[i][1], captin=True))
-                    elif captins['vice'] == player.pk and not vice_captin:
+                        captin = True
+                    elif captins['vice_captin'] == player.pk and not vice_captin:
                         players_objectes.append(GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=True, index=starters[i][1], vice_captin=False))
+                        vice_captin = True
                     else:
                         players_objectes.append(GameWeekPlayer(player=player, game_week_team=game_week_team, position=player.position, starter=True, index=starters[i][1]))
                     i += 1
@@ -98,7 +100,7 @@ class GameWeekTeamManager(models.Manager):
                 if not captin or not vice_captin:
                     raise ValidationError('a team must have a captain and vice captain')
                 GameWeekPlayer.objects.bulk_create(players_objectes)
-
+                print('hhheeerrreee')
                 return game_week_team
         except:
             print_exc()
@@ -118,7 +120,7 @@ class GameWeekTeamPlayerBenchedOrderChoices(models.IntegerChoices):
 
 class GameWeekPlayer(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
-    index = models.PositiveIntegerField(unique=True, validators=[MaxValueValidator(14)])
+    index = models.PositiveIntegerField(validators=[MaxValueValidator(14)])
     game_week_team = models.ForeignKey(GameWeekTeam, on_delete=models.CASCADE, related_name='game_week_player_game_week_team')
     position = models.IntegerField(choices=PlayerPositions.choices)
     starter = models.BooleanField(default=False, db_index=True)

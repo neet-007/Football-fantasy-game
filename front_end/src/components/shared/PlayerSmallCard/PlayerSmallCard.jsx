@@ -3,16 +3,15 @@ import './PlayerSmallCard.css'
 import Modal from '../Modal/Modal'
 import Button from '../Button/Button'
 
-function PlayerSmallCard({pickTeam, player, captin, viceCaptin, disabledPlayers={}, togglePitchPlayer=() => {}, togglePickTeam, team3Plus=() => {}}) {
+function PlayerSmallCard({pickTeam, player, captin, viceCaptin, benched, selectedPlayer, setSelectedPlayer, positionsCounts, disabledPlayers={}, togglePitchPlayer=() => {}, togglePickTeam, toggleTeamSwitch=() => {},team3Plus=() => {}}) {
   const [isOpen, setIsOpen] = useState(false)
 
   function handleClick(e){
     if (e.target.id === 'modal-overlay') return setIsOpen(false)
     return setIsOpen(true)
   }
-  if (captin) console.log(player.name)
   return (
-    <article className={`player-small-card_article ${team3Plus(player.club) ? 'backgroundColor-red':''}`} onClick={handleClick}>
+    <article className={`player-small-card_article ${team3Plus(player.club) ? 'backgroundColor-red':(selectedPlayer && selectedPlayer[2]) ? selectedPlayer[1] === 0 ? player.position === 0 ? 'backgroundColor-red' : '' : player.position === 0 ? '' : 'backgroundColor-red' : (selectedPlayer && benched) ? selectedPlayer[1] === 0 ? player.position === 0 ? 'backgroundColor-red' : '': player.position === 0 ? '' : 'backgroundColor-red' : ''}`} onClick={handleClick}>
         {pickTeam ?
         captin ?
         <p>C</p>
@@ -37,13 +36,20 @@ function PlayerSmallCard({pickTeam, player, captin, viceCaptin, disabledPlayers=
         {pickTeam ?
         <Modal isOpen={isOpen} className={'d-flex f-di-column gap-1 p-1 align-items-center '}>
           <p>{player.name}</p>
-          {
-           <Button childern='' >switch</Button>
+          {(!selectedPlayer || ((selectedPlayer && selectedPlayer[2] && selectedPlayer[0] !== player.index) ?
+          selectedPlayer[1] === 0 ?
+          player.position === 0:
+          (positionsCounts[selectedPlayer[1]][player.position] && player.position !== 0) :
+          (player.position !== 0 && player.index !== selectedPlayer[0] && benched)))  &&
+           <Button childern='' onClick={() => toggleTeamSwitch({player, benched, cancel:false})}>switch</Button>
           }
-          {!player.captin &&
+          {(selectedPlayer && selectedPlayer[0] === player.index) &&
+            <Button childern='' onClick={() => toggleTeamSwitch({player:{}, benched:false, cancel:true})}>cancel</Button>
+          }
+          {(!player.captin && !selectedPlayer) &&
            <Button childern='' onClick={() => togglePickTeam(player, captin=true)}>make captin</Button>
           }
-          {!player.vice_captin &&
+          {(!player.vice_captin && !selectedPlayer) &&
            <Button childern='' onClick={() => togglePickTeam(player, viceCaptin=true)}>make vice captin</Button>
           }
           <Button childern=''>player information</Button>

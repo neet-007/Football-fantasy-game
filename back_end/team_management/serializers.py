@@ -56,6 +56,7 @@ class GameWeekTeamSerializer(ModelSerializer):
     team_pk = IntegerField(write_only=True, required=False)
     players_pks = ListField(child=ListField(child=IntegerField()), allow_empty=False, min_length=11, max_length=11, write_only=True)
     bench_order = DictField(child=ListField(child=IntegerField()), allow_empty=False, write_only=True)
+    captins = DictField(child=IntegerField(), allow_empty=False, write_only=True)
     players = SerializerMethodField(method_name='get_players')
 
     class Meta:
@@ -71,7 +72,8 @@ class GameWeekTeamSerializer(ModelSerializer):
         return self.Meta.model.objects.create(
             team_pk = self.context['team_pk'],
             starters = validated_data['players_pks'],
-            bench_order = validated_data['bench_order']
+            bench_order = validated_data['bench_order'],
+            captins = validated_data['captins']
         )
 
     def get_players(self, obj):
