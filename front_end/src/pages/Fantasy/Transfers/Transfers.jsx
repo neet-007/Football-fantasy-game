@@ -52,7 +52,7 @@ const AA = {
   }
 }
 
-function PlayerCard({player, includedPlayers=[], disabledPlayers, setPlayersList, setTransferDetails}){
+function PlayerCard({player, includedPlayers=[], disabledPlayers, setPlayersList, setTransferDetails, togglePitchPlayer}){
   const [isOpen, setIsOpen] = useState(false)
   function handleClick(e){
     if (e.target.id === 'modal-overlay') return setIsOpen(false)
@@ -75,12 +75,7 @@ function PlayerCard({player, includedPlayers=[], disabledPlayers, setPlayersList
         }
       };
     });
-    setTransferDetails(prev => (
-      {...prev, ['moneyRemaining']:prev.moneyRemaining - player.price,
-                ['freeTransfers']:prev.freeTransfers <= 0 ? 0 : prev.freeTransfers - 1,
-                ['cost']:prev.freeTransfers <= 0 ? prev.cost + 4 :prev.cost,
-                ['playersTransferd']:prev.freeTransfers[player.id] ? {...prev}:{...prev, [player.id]:{in:{id:player.id, price:player.price, club:player.team__name, name:player.last_name? player.last_name: player.first_name}, out:reIndex}}}
-    ));
+    togglePitchPlayer(false, false, player, reIndex);
   }
 
   return(
@@ -110,7 +105,7 @@ function PlayerCard({player, includedPlayers=[], disabledPlayers, setPlayersList
   )
 }
 
-function TransfersFilters({includedPlayers, disabledPlayers, setPlayersList, setTransferDetails}){
+function TransfersFilters({includedPlayers, disabledPlayers, setPlayersList, setTransferDetails, togglePitchPlayer}){
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState()
   const {data, isLoading} = useGetPlayersFanstasy({team:filters?.team, position:filters?.position, sort:filters?.sort, page})
@@ -130,7 +125,7 @@ function TransfersFilters({includedPlayers, disabledPlayers, setPlayersList, set
                     </Thead>
                     <Tbody>
                       {data?.players[section].map(player => {
-                        return <PlayerCard player={player} includedPlayers={includedPlayers} disabledPlayers={disabledPlayers} setPlayersList={setPlayersList} setTransferDetails={setTransferDetails}/>
+                        return <PlayerCard player={player} includedPlayers={includedPlayers} disabledPlayers={disabledPlayers} setPlayersList={setPlayersList} setTransferDetails={setTransferDetails} togglePitchPlayer={togglePitchPlayer}/>
                       })}
                     </Tbody>
                   </table>
@@ -144,10 +139,17 @@ function TransfersFilters({includedPlayers, disabledPlayers, setPlayersList, set
 function Transferss({userTeam}) {
   const [playersList, setPlayersList] = useState(userTeam.players)
   const [disabledPlayers, setDisabledPlayers] = useState({0:[], 1:[], 3:[], 4:[]})
+  const [wildCard, setWildCard] = useState(false)
   const [transferDetails, setTransferDetails] = useState({freeTransfers:userTeam.team.free_transfers, cost:0, moneyRemaining:parseFloat(userTeam.team.bank), playersTransferd:{}})
 
+  const playersIst = useMemo(() => {
+    const {captins, ...other} = playersList
+    return Object.values(other).flatMap(({starter, benched}) => [...starter, ...benched]).map(x => x.id)
+  })
+
   const includedPlayers = useMemo(() => {
-    const playerArr = Object.values(playersList).flatMap(({ starter, benched }) => [...starter, ...benched]);
+    const {captins, ...other} = playersList
+    const playerArr = Object.values(other).flatMap(({ starter, benched }) => [...starter, ...benched]);
     const a = playerArr.filter(player => disabledPlayers[player.position].indexOf(player.index) === -1)
     const teamsCount = a.reduce((acc, curr) => {
       acc[curr.club] = (acc[curr.club] || 0) + 1;
@@ -164,14 +166,37 @@ function Transferss({userTeam}) {
   useEffect(() => {
     console.log(transferDetails)
   },[transferDetails])
-  function togglePitchPlayer(restore, position, index, price){
+  function togglePitchPlayer(restore, remove, player, index){
     if (restore){
-      setDisabledPlayers(prev => ({...prev, [position]:prev[position].filter(x => x !== index).sort((a,b) => a - b)}))
-      setTransferDetails(prev => ({...prev, ['moneyRemaining']:prev.moneyRemaining - price}))
+      setDisabledPlayers(prev => ({...prev, [player.position]:prev[player.position].filter(x => x !== player.index).sort((a,b) => a - b)}))
+      setTransferDetails(prev => ({...prev, ['moneyRemaining']:prev.moneyRemaining - player.price}))
     }
+    else if(remove){
+      console.log(!Object.keys(transferDetails.playersTransferd).find(x => x.includes(`${player.id}-${player.index}`)))
+      setDisabledPlayers(prev => ({...prev, [player.position]:[...prev[player.position], player.index].sort((a,b) => a-b)}))
+      setTransferDetails(prev => ({...prev,
+        ['moneyRemaining']:prev.moneyRemaining + player.price,}))
+    }
+    // you need to get the prev player id instead of using player id
     else{
-      setDisabledPlayers(prev => ({...prev, [position]:[...prev[position], index].sort((a,b) => a-b)}))
-      setTransferDetails(prev => ({...prev, ['moneyRemaining']:prev.moneyRemaining + price}))
+      setTransferDetails(prev => (
+        !Object.keys(prev.playersTransferd).find(x => x.includes(`-${index}`)) ?
+        {...prev, ['moneyRemaining']:prev.moneyRemaining - player.price,
+                  ['cost']:prev.freeTransfers <= 0 ? prev.cost + 4 :prev.cost,
+                  ['freeTransfers']:playersIst.includes(player.id) ? prev.freeTransfers:prev.freeTransfers <= 0 ? 0 : prev.freeTransfers - 1,
+                  ['playersTransferd']:{...prev.playersTransferd,
+                  [`${player.id}-${index}`]:[player.id, (wildCard || prev.freeTransfers > 0) ? 0 : 4]}
+                }
+        :
+        {...prev, ['moneyRemaining']:prev.moneyRemaining - player.price,
+                  ['playersTransferd']:Object.keys(prev.playersTransferd).reduce((acc, curr) => {
+                    if(!curr.includes(`-${index}`)){
+                      acc[curr] = prev.playersTransferd[curr]
+                    }
+                    return acc
+                  },{[`${player.id}-${index}`]:[player.id, (wildCard || prev.freeTransfers > 0) ? 0 : 4]})
+                }
+      ));
     }
   }
 
@@ -181,9 +206,6 @@ function Transferss({userTeam}) {
     setTransferDetails({freeTransfers:userTeam.team.free_transfers, cost:0, moneyRemaining:parseFloat(userTeam.team.bank), playersTransferd:{}})
   }
 
-  function makeTransfers(){
-    
-  }
   function team3Plus(team){
     if (includedPlayers[2].indexOf(team) === -1) return false
     return true
@@ -194,7 +216,7 @@ function Transferss({userTeam}) {
         <PlayerTransferPitch transferDetails={transferDetails} setTransferDetails={setTransferDetails} playersList={playersList} reset={reset} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} team3Plus={team3Plus}/>
         fixtures
       </div>
-      <TransfersFilters includedPlayers={includedPlayers} disabledPlayers={disabledPlayers} setPlayersList={setPlayersList} setTransferDetails={setTransferDetails}/>
+      <TransfersFilters includedPlayers={includedPlayers} disabledPlayers={disabledPlayers} setPlayersList={setPlayersList} setTransferDetails={setTransferDetails} togglePitchPlayer={togglePitchPlayer}/>
     </section>
   )
 }

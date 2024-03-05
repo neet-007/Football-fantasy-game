@@ -2,9 +2,26 @@ import React from 'react'
 import './PlayerTransferPitch.css'
 import Button from '../shared/Button/Button'
 import PlayerSelection from '../shared/PlayerSelection/PlayerSelection'
+import { usePostTransfers } from '../../lib/queriesAndMutaions'
 
 function PlayerTransferPitch({transferDetails, setTransferDetails, playersList, reset, disabledPlayers, togglePitchPlayer, team3Plus}) {
-  return (
+    const {mutateAsync:postTransfers} = usePostTransfers()
+    function makeTransfers(){
+    const {captins, ...other} = playersList
+    const temp = Object.values(other)
+    console.log({team:{players_pks:temp.flatMap(({starter}) => [...starter]).map(x => [x.id, x.index]),
+    bench_order:temp.flatMap(({benched}) => [...benched]).sort((a,b) => a.bench_order - b.bench_order).map(x => [x.id, x.index]).reduce((acc, curr, index) => {
+        acc[curr[0]] = [index, curr[1]]
+        return acc
+    },{}),
+    captins,
+    transfers_dict:Object.keys(transferDetails.playersTransferd).reduce((acc, curr) => {
+        acc[curr.slice(0, curr.indexOf('-'))] = transferDetails.playersTransferd[curr]
+        return acc
+    },{})}})
+  }
+
+    return (
     <section>
         <PlayerSelection transfer playersList={playersList} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} setTransferDetails={setTransferDetails} team3Plus={team3Plus}>
             <div className='player-transfer-pitch_header cap'>
@@ -34,6 +51,7 @@ function PlayerTransferPitch({transferDetails, setTransferDetails, playersList, 
                 <Button childern='' className='player-transfer-pitch_header-wild-card'>wild card</Button>
             </div>
         </PlayerSelection>
+        <Button childern='' onClick={makeTransfers}>transfer</Button>
     </section>
   )
 }

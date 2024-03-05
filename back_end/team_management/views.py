@@ -49,18 +49,16 @@ class GameWeekTeamViewSet(ModelViewSet):
         if request.user == AnonymousUser:
             return Response({'error':'user is anonymoues'}, status=status.HTTP_401_UNAUTHORIZED)
 
-        try:
-            team = Team.objects.get(user=request.user)
-        except Team.DoesNotExist:
-            return Response({'error':'user must have team'}, status=status.HTTP_400_BAD_REQUEST)
+        team_pk = Team.objects.filter(user=self.request.user).values_list('pk', flat=True)
 
-        serialized_data = PlayerTransferSerializer(data=request.data, context={'team':team})
+        if len(team_pk) != 1:
+            return Response('user must have one team', status=status.HTTP_400_BAD_REQUEST)
 
+        serialized_data = GameWeekTeamSerializer(data=request.data, context={'team_pk':team_pk[0]})
         if serialized_data.is_valid():
-            serialized_data.create(serialized_data.validated_data)
-            return Response({'success':'player transfer made'}, status=status.HTTP_201_CREATED)
+            serialized_data.save(**serialized_data.validated_data)
 
-        return Response(serialized_data.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error':serialized_data.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()

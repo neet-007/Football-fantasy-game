@@ -2,7 +2,7 @@ from .models import Team, GameWeekTeam, GameWeekPlayer, PlayerTransfer
 from user_auth.serializers import UserModelSerializer
 from player_info.serializers import PlayerSerializer
 from .models import PlayerPositions
-from rest_framework.serializers import ModelSerializer, ValidationError, ListField, DictField, IntegerField, SerializerMethodField
+from rest_framework.serializers import ModelSerializer, ValidationError, ListField, DictField, IntegerField, FloatField, SerializerMethodField
 
 
 class TeamSerializer(ModelSerializer):
@@ -58,6 +58,7 @@ class GameWeekTeamSerializer(ModelSerializer):
     bench_order = DictField(child=ListField(child=IntegerField()), allow_empty=False, write_only=True)
     captins = DictField(child=IntegerField(), allow_empty=False, write_only=True)
     players = SerializerMethodField(method_name='get_players')
+    transfers_dict = DictField(child=ListField(child=IntegerField()), required=False)
 
     class Meta:
         model = GameWeekTeam
@@ -69,6 +70,15 @@ class GameWeekTeamSerializer(ModelSerializer):
 
 
     def create(self, validated_data):
+        if 'transfers_dict' in validated_data:
+            return self.Meta.model.objects.create_team_with_transfers(
+                team_pk = self.context['team_pk'],
+                starters = validated_data['players_pks'],
+                bench_order = validated_data['bench_order'],
+                captins = validated_data['captins'],
+                transfers_dict = validated_data['transfers_dict']
+            )
+
         return self.Meta.model.objects.create(
             team_pk = self.context['team_pk'],
             starters = validated_data['players_pks'],

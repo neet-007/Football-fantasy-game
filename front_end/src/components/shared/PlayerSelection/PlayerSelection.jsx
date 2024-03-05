@@ -74,11 +74,6 @@ function PlayerSelection({benchRow, pickTeam, transfer, teamSelection, playersLi
                 }
             </span>
         </div>
-        {transfer &&
-        <div className='player-selection_transfer'>
-            <Button className={`width-100`} childern='transfers'/>
-        </div>
-        }
         {pickTeam &&
         <Row className='player-selection_pick-team cap'>
             <Column className={'d-flex f-di-column gap-1'}>

@@ -151,3 +151,12 @@ export async function postTeam({team}){
         console.log(error)
     }
 }
+export async function postTransfers({team}){
+    try {
+        let res = await axios.post('/api/team/game-week-team/player_transfer/', team, config)
+        console.log(res.data)
+        return res.data
+    } catch (error) {
+        console.log(error)
+    }
+}

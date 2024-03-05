@@ -105,6 +105,29 @@ class GameWeekTeamManager(models.Manager):
         except:
             print_exc()
 
+    def create_team_with_transfers(self, team_pk, starters:list[[]:int], bench_order:dict[int, []:int], captins:dict[str, int], transfers_dict:dict[int, list[int, int]]):
+        players_transfers = Player.objects.filter(models.Q(pk__in=[int(key) for key in transfers_dict.keys()]) | models.Q(pk__in=[l_s[1] for l_s in transfers_dict.values()]))
+        print([l_s[1] for l_s in transfers_dict.values()])
+        if not len(players_transfers) == len(transfers_dict) * 2:
+            raise ValidationError('some players are not the the database')
+
+        try:
+            team = Team.objects.get(pk=team_pk)
+        except Team.DoesNotExist:
+            raise ValueError('no team with this pk')
+
+        players_out = {}
+        transfers_to_create = []
+        for player in players_transfers:
+            if not player.pk in transfers_dict:
+                players_out [player.pk] = player
+                continue
+            transfers_to_create.append(PlayerTransfer(team=team, player_in=player, player_out=players_out[transfers_dict[player.pk]], game_week=GAMEWEEK, cost=transfers_dict[player.pk][1]))
+
+        self.create(team_pk=team_pk, starters=starters, bench_order=bench_order, captins=captins)
+
+        return PlayerTransfer.objects.bulk_create(transfers_to_create)
+
 class GameWeekTeam(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='game_week_team_team')
     points = models.IntegerField(default=0, db_index=True, blank=True)

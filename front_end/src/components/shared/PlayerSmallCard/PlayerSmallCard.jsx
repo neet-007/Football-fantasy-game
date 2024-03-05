@@ -59,12 +59,12 @@ function PlayerSmallCard({pickTeam, player, captin, viceCaptin, benched, selecte
         <Modal isOpen={isOpen} className={'d-flex f-di-column gap-1 p-1 align-items-center '}>
           <p>{player.name}</p>
           {disabledPlayers[player.position].indexOf(player.index) !== -1&&
-           <Button childern='' onClick={() => togglePitchPlayer(true, player.position, player.index, parseFloat(player.price))}>restore player</Button>
+           <Button childern='' onClick={() => togglePitchPlayer(true, false, player)}>restore player</Button>
           }
           {disabledPlayers[player.position].indexOf(player.index) !== -1&&
            <Button childern=''>select replacment</Button>
           }
-          <Button childern='' onClick={() => togglePitchPlayer(false, player.position, player.index, parseFloat(player.price))}>remove player</Button>
+          <Button childern='' onClick={() => togglePitchPlayer(false, true ,player)}>remove player</Button>
           <Button childern=''>player information</Button>
         </Modal>
         }
