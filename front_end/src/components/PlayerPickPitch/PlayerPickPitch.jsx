@@ -2,14 +2,14 @@ import React from 'react'
 import './PlayerPickPitch.css'
 import PlayerSelection from '../shared/PlayerSelection/PlayerSelection'
 import Button from '../shared/Button/Button'
-import { usePostPickTeam } from '../../lib/queriesAndMutaions'
+import { usePostTeam } from '../../lib/queriesAndMutaions'
 
 function PlayerPickPitch({playersList, selectedPlayer, positionsCounts, setSelectedPlayer, togglePickTeam, toggleTeamSwitch}) {
-  const {mutateAsync:postPickTeam} = usePostPickTeam()
+  const {mutateAsync:postTeam} = usePostTeam()
   function saveTeam(){
     const {captins, ...other} = playersList
     const temp = Object.values(other)
-    postPickTeam({team:{players_pks:temp.flatMap(({starter}) => [...starter].map(x => [x.id, x.index])), bench_order:temp.flatMap(({benched}) => [...benched].sort((a,b) => a.benched_order - b.benched_order)).map(x => [x.id, x.index]).reduce((obj, value, key) => {obj[value[0]]=[key, value[1]]; return obj},{}), captins}})
+    postTeam({team:{players_pks:temp.flatMap(({starter}) => [...starter].map(x => [x.id, x.index])), bench_order:temp.flatMap(({benched}) => [...benched].sort((a,b) => a.benched_order - b.benched_order)).map(x => [x.id, x.index]).reduce((obj, value, key) => {obj[value[0]]=[key, value[1]]; return obj},{}), captins}})
   }
   return (
     <section>

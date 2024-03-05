@@ -1,5 +1,5 @@
 import {useQuery, useMutation} from '@tanstack/react-query'
-import { getInjuries, getPlayersFantasy, getPremierLeagueTable, getStatsByCategory, getStatsDashBoard, getStatsFantasy, getTeamsFixtures, getTeamsResults, getUserTeam, login, logout, postPickTeam, register } from './axios'
+import { getInjuries, getPlayersFantasy, getPremierLeagueTable, getStatsByCategory, getStatsDashBoard, getStatsFantasy, getTeamsFixtures, getTeamsResults, getUserTeam, login, logout, postTeam, register } from './axios'
 
 export function useRegister(){
     return useMutation({
@@ -82,8 +82,8 @@ export function useGetUserTeam(){
     })
 }
 
-export function usePostPickTeam(){
+export function usePostTeam(){
     return useMutation({
-        mutationFn: ({team}) => postPickTeam({team})
+        mutationFn: ({team}) => postTeam({team})
     })
 }

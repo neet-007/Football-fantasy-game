@@ -3,12 +3,19 @@ import PlayerSelection from '../shared/PlayerSelection/PlayerSelection'
 import SectionHeader from '../shared/SectionHeader/SectionHeader'
 import './TeamSelectionPitch.css'
 import Button from '../shared/Button/Button'
+import { usePostTeam } from '../../lib/queriesAndMutaions'
 
 function TeamSelectionPitch({playersList, reset, disabledPlayers, setDisapledPlayers, selectionDetails,togglePitchPlayer, team3Plus}) {
+  const {mutateAsync:postTeam} = usePostTeam()
+
+  function makeTeam(){
+    const temp = Object.values(playersList)
+    postTeam({team:{players_pks:temp.flatMap(({starter}) => [...starter].map(x => [x.id, x.index])), bench_order:temp.flatMap(({benched}) => [...benched].map(x => [x.id, x.index])).reduce((obj, key, value) => {obj[key[0]]=[value, key[1]]; return obj},{}), captins:{captin:temp.flatMap(({starter}) => [...starter]).map(x => x.id)[7], vice_captin:temp.flatMap(({starter}) => [...starter]).map(x => x.id)[8]}}})
+  }
 
   return (
     <section className='cap'>
-        <PlayerSelection teamSelection playersList={playersList} disabledPlayers={disabledPlayers} setDisabledPlayers={setDisapledPlayers} togglePitchPlayer={togglePitchPlayer} team3Plus={team3Plus}>
+        <PlayerSelection teamSelection playersList={playersList} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} team3Plus={team3Plus}>
            <SectionHeader>
             <p>gameweek</p>
            </SectionHeader>
@@ -26,6 +33,9 @@ function TeamSelectionPitch({playersList, reset, disabledPlayers, setDisapledPla
             </div>
            </div>
         </PlayerSelection>
+        {(selectionDetails.money > 0.00 && selectionDetails.players === 15) &&
+          <Button childern='' onClick={makeTeam}>dsad</Button>
+        }
     </section>
   )
 }

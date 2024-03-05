@@ -3,13 +3,14 @@ import './PlayerSmallCard.css'
 import Modal from '../Modal/Modal'
 import Button from '../Button/Button'
 
-function PlayerSmallCard({pickTeam, player, captin, viceCaptin, benched, selectedPlayer, setSelectedPlayer, positionsCounts, disabledPlayers={}, togglePitchPlayer=() => {}, togglePickTeam, toggleTeamSwitch=() => {},team3Plus=() => {}}) {
+function PlayerSmallCard({pickTeam, player, captin, viceCaptin, benched, selectedPlayer, positionsCounts, disabledPlayers={}, togglePitchPlayer=() => {}, togglePickTeam, toggleTeamSwitch=() => {},team3Plus=() => {}}) {
   const [isOpen, setIsOpen] = useState(false)
 
   function handleClick(e){
     if (e.target.id === 'modal-overlay') return setIsOpen(false)
     return setIsOpen(true)
   }
+
   return (
     <article className={`player-small-card_article ${team3Plus(player.club) ? 'backgroundColor-red':(selectedPlayer && selectedPlayer[2]) ? selectedPlayer[1] === 0 ? player.position === 0 ? 'backgroundColor-red' : '' : player.position === 0 ? '' : 'backgroundColor-red' : (selectedPlayer && benched) ? selectedPlayer[1] === 0 ? player.position === 0 ? 'backgroundColor-red' : '': player.position === 0 ? '' : 'backgroundColor-red' : ''}`} onClick={handleClick}>
         {pickTeam ?
