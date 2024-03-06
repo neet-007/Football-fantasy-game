@@ -3,7 +3,7 @@ import './PlayerSmallCard.css'
 import Modal from '../Modal/Modal'
 import Button from '../Button/Button'
 
-function PlayerSmallCard({pickTeam, player, captin, viceCaptin, benched, selectedPlayer, positionsCounts, disabledPlayers={}, togglePitchPlayer=() => {}, togglePickTeam, toggleTeamSwitch=() => {},team3Plus=() => {}}) {
+function PlayerSmallCard({pickTeam, player, captin, viceCaptin, benched, selectedPlayer, positionsCounts, disabledPlayers, togglePitchPlayer=() => {}, togglePickTeam, toggleTeamSwitch=() => {},team3Plus=() => {}}) {
   const [isOpen, setIsOpen] = useState(false)
 
   function handleClick(e){

@@ -16,16 +16,16 @@ user_model = get_user_model()
 
 
 class TeamManager(models.Manager):
-    def create(self, user, name:str, favorite_team_pk:int ) -> 'Team':
+    def create(self, user, name:str, favorite_team_pk:list[int] ) -> 'Team':
         if user == AnonymousUser:
             raise ValueError('user is anonymous')
 
-        try:
-            favorite_team = PremierLeagueTeamBase.objects.get(pk=favorite_team_pk)
-        except PremierLeagueTeamBase.DoesNotExist:
-            raise ValueError('team is not registred')
 
-        team = Team(user=user, name=name, favorite_team=favorite_team)
+        favorite_team = PremierLeagueTeamBase.objects.filter(pk__in=favorite_team_pk)
+        if len(favorite_team) <= 0:
+            raise ValidationError('must provice a favorite team')
+
+        team = Team(user=user, name=name, favorite_team=favorite_team[0])
         team.save()
 
         return team
@@ -45,6 +45,7 @@ class Team(models.Model):
     free_hit = models.BooleanField(default=True)
     triple_captin = models.BooleanField(default=True)
     wild_card = models.BooleanField(default=True)
+    made_first_team = models.BooleanField(default=False)
 
     objects = TeamManager()
 
@@ -69,6 +70,10 @@ class GameWeekTeamManager(models.Manager):
 
                 if len(starters) != 11 and len(bench_order) != 4:
                     raise ValidationError('startes must be 11 and benched players must be 4')
+
+                if not team[0].made_first_team:
+                    team[0].made_first_team = True
+                    team[0].save()
 
                 starters_list = [starter[0] for starter in starters]
                 game_week_team = GameWeekTeam(team=team[0], game_week=GAMEWEEK)

@@ -177,7 +177,7 @@ function Transferss({userTeam}) {
       setTransferDetails(prev => ({...prev,
         ['moneyRemaining']:prev.moneyRemaining + player.price,}))
     }
-    // you need to get the prev player id instead of using player id
+
     else{
       setTransferDetails(prev => (
         !Object.keys(prev.playersTransferd).find(x => x.includes(`-${index}`)) ?

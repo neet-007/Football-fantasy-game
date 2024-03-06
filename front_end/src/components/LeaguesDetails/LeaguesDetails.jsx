@@ -48,28 +48,30 @@ function LeagueTableRow({league}){
   )
 }
 
-function LeagueTable({leagueName, leagues=[{leageu:'league', currentRank:2, lastRank:4, change:'none'}, {leageu:'league', currentRank:2, lastRank:4, change:'down'}, {leageu:'league', currentRank:2, lastRank:4, change:'up'}]}){
+function LeagueTable({leagueName, leagues=[{leageu:'league', currentRank:2, lastRank:4, change:'none'}, {leageu:'league2', currentRank:2, lastRank:4, change:'down'}, {leageu:'league3', currentRank:2, lastRank:4, change:'up'}]}){
   return (
     <article>
     <SectionHeader>{leagueName}</SectionHeader>
     <table className='leagues-details_league-table-table cap'>
       <Thead className={'league-details_league-table-header'}>
-        <Th className='league-details_league-table-header-league'>
-          league
-        </Th>
+        <Tr>
+          <Th className='league-details_league-table-header-league'>
+            league
+          </Th>
         <Th className='league-details_league-table-header-current'>
           current rank
         </Th>
         <Th className='league-details_league-table-header-last'>
           last rank
         </Th>
+        </Tr>
       </Thead>
       <Tbody className={'d-flex f-di-column gap-1'}>
         {(!leagues || leagues.length === 0) ?
         <p>no {leagueName} joined yet, <InvisibleButton>craete and join leagues now</InvisibleButton></p>
         :
         leagues.map(league => {
-          return <LeagueTableRow league={league}/>
+          return <LeagueTableRow key={`league-${league.leageu}`} league={league}/>
         })}
       </Tbody>
     </table>

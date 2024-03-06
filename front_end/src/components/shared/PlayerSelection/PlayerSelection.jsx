@@ -6,7 +6,7 @@ import PlayerSmallCard from '../PlayerSmallCard/PlayerSmallCard'
 import Row from '../Row/Row'
 import Column from '../Column/Column'
 
-function PlayerSelection({benchRow, pickTeam, transfer, teamSelection, playersList, selectedPlayer, setSelectedPlayer, positionsCounts, disabledPlayers, togglePitchPlayer, setTransferDetails, togglePickTeam, toggleTeamSwitch,team3Plus, children, ...props}) {
+function PlayerSelection({benchRow, pickTeam, transfer, teamSelection, playersList, selectedPlayer, setSelectedPlayer, positionsCounts, disabledPlayers={}, togglePitchPlayer, setTransferDetails, togglePickTeam, toggleTeamSwitch,team3Plus, children, ...props}) {
     return (
     <article className='player-selection_article' {...props}>
         <div className='player-selection_header'>
@@ -21,55 +21,55 @@ function PlayerSelection({benchRow, pickTeam, transfer, teamSelection, playersLi
             <span className='player-selection_pitch-goal-keeper-row'>
                 {
                     playersList.goalkeepers.starter.map(player => {
-                        return <PlayerSmallCard pickTeam={pickTeam} player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
+                        return <PlayerSmallCard key={`gk-s-${player.id}`} pickTeam={pickTeam} player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
                     })
                 }
                 {(transfer || teamSelection) &&
                     playersList.goalkeepers.benched.map(player => {
-                        return <PlayerSmallCard player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
+                        return <PlayerSmallCard key={`gk-b-${player.id}`} player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
                     })
                 }
             </span>
             <span className='player-selection_pitch-defenders-row'>
                 {
                     playersList.defenders.starter.map(player => {
-                        return <PlayerSmallCard pickTeam={pickTeam} player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
+                        return <PlayerSmallCard key={`d-s-${player.id}`} pickTeam={pickTeam} player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
                     })
                 }
                 {(transfer || teamSelection) &&
                     playersList.defenders.benched.map(player => {
-                        return <PlayerSmallCard player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
+                        return <PlayerSmallCard key={`d-b-${player.id}`} player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
                     })
                 }
             </span>
             <span className='player-selection_pitch-midfielders-row'>
                 {
                     playersList.midfielders.starter.map(player => {
-                        return <PlayerSmallCard pickTeam={pickTeam} player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
+                        return <PlayerSmallCard key={`m-s-${player.id}`} pickTeam={pickTeam} player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
                     })
                 }
                 {(transfer || teamSelection) &&
                     playersList.midfielders.benched.map(player => {
-                        return <PlayerSmallCard player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
+                        return <PlayerSmallCard key={`m-b-${player.id}`} player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
                     })
                 }
             </span>
             <span className='player-selection_pitch-strikers-row'>
                 {
                     playersList.strikers.starter.map(player => {
-                        return <PlayerSmallCard pickTeam={pickTeam} player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
+                        return <PlayerSmallCard key={`s-s-${player.id}`} pickTeam={pickTeam} player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
                     })
                 }
                 {(transfer || teamSelection) &&
                     playersList.strikers.benched.map(player => {
-                        return <PlayerSmallCard player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
+                        return <PlayerSmallCard key={`s-b-${player.id}`} player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
                     })
                 }
             </span>
             <span className={`player-selection_pitch-bench-row ${benchRow ? 'player-selection_pitch-bench-row-show' : 'player-selection_pitch-bench-row-hide'}`}>
                 {
                     playersList.goalkeepers.benched.concat(playersList.defenders.benched).concat(playersList.midfielders.benched).concat(playersList.strikers.benched).sort((a,b) => a.benched_order - b.benched_order).map(player => {
-                        return <PlayerSmallCard pickTeam={pickTeam} player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} benched={true} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
+                        return <PlayerSmallCard key={`b-b-${player.id}`} pickTeam={pickTeam} player={player} captin={playersList.captins?.captin === player.id} viceCaptin={playersList.captins?.vice_captin === player.id} benched={true} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} positionsCounts={positionsCounts} disabledPlayers={disabledPlayers} togglePitchPlayer={togglePitchPlayer} togglePickTeam={togglePickTeam} toggleTeamSwitch={toggleTeamSwitch} team3Plus={team3Plus}/>
                     })
                 }
             </span>

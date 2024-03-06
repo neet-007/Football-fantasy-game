@@ -80,9 +80,9 @@ class GetCSRFToken(APIView):
         return Response({'success':'csfrtoken generated'}, status=status.HTTP_200_OK)
 
 class CheckUserView(APIView):
-    def post(self, request):
+    def get(self, request):
         if request.user == AnonymousUser or not request.user:
-            return Response({'error':'user is not authenticated'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(UserModelSerializer(request.user).data, status=status.HTTP_200_OK)
+            return Response({'error':'user is not authenticated'}, status=status.HTTP_200_OK)
+        return Response({'success':UserModelSerializer(request.user).data}, status=status.HTTP_200_OK)
 
 

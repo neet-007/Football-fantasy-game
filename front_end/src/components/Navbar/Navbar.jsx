@@ -24,7 +24,8 @@ function Navbar() {
         <img className='nav-bar_nav-img' src="/src/assets/pl-logo.png"/>
         <div className='nav-bar_div'>
             <span className='nav-bar_span-user-search'>
-                {isAuthenticated ?
+                <CSRFToken/>
+                {!isAuthenticated ?
                     <span className='cursor-pointer'>
                         user
                     </span>

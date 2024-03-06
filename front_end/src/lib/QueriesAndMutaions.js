@@ -1,5 +1,5 @@
 import {useQuery, useMutation} from '@tanstack/react-query'
-import { getInjuries, getPlayersFantasy, getPremierLeagueTable, getStatsByCategory, getStatsDashBoard, getStatsFantasy, getTeamsFixtures, getTeamsResults, getUserTeam, login, logout, postTeam, postTransfers, register } from './axios'
+import { checkUser, getInjuries, getPlayersFantasy, getPremierLeagueBaseTeams, getPremierLeagueTable, getStatsByCategory, getStatsDashBoard, getStatsFantasy, getTeamsFixtures, getTeamsResults, getUserTeam, login, logout, postTeam, postTeamCreation, postTransfers, register } from './axios'
 
 export function useRegister(){
     return useMutation({
@@ -16,6 +16,26 @@ export function useLogin(){
 export function useLogout(){
     return useMutation({
         mutationFn: logout
+    })
+}
+
+export function usePostTeamCreation(){
+    return useMutation({
+        mutationFn:({name, favoriteTeamPk}) => postTeamCreation({name, favoriteTeamPk})
+    })
+}
+
+export function useCheckUser(){
+    return useQuery({
+        queryKey:['check-user'],
+        queryFn:checkUser
+    })
+}
+
+export function useGetPremierLeagueBaseTeams(){
+    return useQuery({
+        queryKey:['premier-league-base-teams'],
+        queryFn:getPremierLeagueBaseTeams
     })
 }
 

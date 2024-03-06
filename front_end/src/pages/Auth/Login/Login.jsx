@@ -3,6 +3,8 @@ import Button from '../../../components/shared/Button/Button'
 import {CSRFToken} from '../../../components/shared/CSRFToken'
 import { useMainContext } from '../../../context/MainContext'
 import { useLogin } from '../../../lib/queriesAndMutaions'
+import { redirect } from 'react-router-dom'
+import { checkUser } from '../../../lib/axios'
 
 function Login() {
   const {setUser, isAuthenticated, setIsAuthenticated} = useMainContext()
@@ -13,8 +15,17 @@ function Login() {
   function handleSubmit(e){
     e.preventDefault()
     login({email:emailRef.current.value, password:passwordRef.current.value}).then(res => {
+      checkUser().then(res => {
+        if (res?.error){
+
+        }
+        setUser(res?.success)
+        setIsAuthenticated(true)
+        redirect('team-creation')
+      })
     })
   }
+  if(isAuthenticated) redirect('')
   return (
     <form className='auth-layout_form' onSubmit={handleSubmit}>
         <CSRFToken/>

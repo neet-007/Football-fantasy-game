@@ -15,6 +15,7 @@ const Tables = lazyLoad('../pages/Info/Tables/Tables')
 const AuthLayout = lazyLoad('../pages/Auth/AuthLayout')
 const SignUp = lazyLoad('../pages/Auth/SignUp/SignUp')
 const Login = lazyLoad('../pages/Auth/Login/Login')
+const TeamCreation = lazyLoad('../pages/Auth/TeamCreation/TeamCreation')
 
 const FantasyLayout = lazyLoad('../pages/Fantasy/FantasyLayout')
 const FantasyFixtures = lazyLoad('../pages/Fantasy/Fixtures/Fixtures')
@@ -56,6 +57,7 @@ function App() {
         <Route element={<AuthLayout/>}>
           <Route path='/auth/signup' element={<SignUp/>}/>
           <Route path='/auth/login' element={<Login/>}/>
+          <Route path='/auth/team-creation' element={<TeamCreation/>}/>
         </Route>
         <Route path='*' element={<h1>not found</h1>}/>
       </Routes>

@@ -60,6 +60,33 @@ export async function logout(){
         console.log(error)
     }
 }
+export async function checkUser(){
+    try {
+        let res = await axios.get('/api/auth/check-user', {}, config)
+        console.log(res.data)
+        return res.data
+    } catch (error) {
+        console.log(error)
+    }
+}
+export async function postTeamCreation({name , favoriteTeamPk}){
+    try {
+        let res = await axios.post('/api/team/team/', {name, favorite_team_pk:favoriteTeamPk}, config)
+        console.log(res.data)
+        return res.data
+    } catch (error) {
+        console.log(error)
+    }
+}
+export async function getPremierLeagueBaseTeams(){
+    try {
+        let res = await axios.get('/api/premier-league/teams/base_teams_list/')
+        console.log(res.data)
+        return res.data
+    } catch (error) {
+        console.log(error)
+    }
+}
 export async function getPremierLeagueTable(){
     try {
         let res = await axios.get('/api/premier-league/teams/')

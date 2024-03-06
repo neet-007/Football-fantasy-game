@@ -6,7 +6,7 @@ import { useRegister } from '../../../lib/queriesAndMutaions'
 import { redirect } from 'react-router-dom'
 
 function SignUp() {
-  const {isAuthenticated} = useMainContext()
+  //const {isAuthenticated} = useMainContext()
   const {mutateAsync:register} = useRegister()
   const emailRef = useRef()
   const passwordRef = useRef()
@@ -19,7 +19,7 @@ function SignUp() {
       return redirect('./login')
     })
   }
-  if (isAuthenticated) return redirect('')
+  //if (isAuthenticated) return redirect('')
   return (
     <form className='auth-layout_form' onSubmit={handleSubmit}>
         <CSRFToken/>

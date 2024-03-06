@@ -1,13 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './PlayerPointsPitch.css'
 import PlayerSelection from '../shared/PlayerSelection/PlayerSelection'
 import InvisibleButton from '../shared/InvisibleButton/InvisibleButton'
 import { ArrowRight, ChevronLeft, ChevronRight, StarFill } from 'react-bootstrap-icons'
 
-function PlayerPointsPitch() {
+function PlayerPointsPitch({userTeam}) {
+  const [playersList, setPlayersList] = useState(userTeam.players)
   return (
     <section>
-        <PlayerSelection>
+        <PlayerSelection benchRow playersList={playersList} disabledPlayers={{0:[], 1:[], 3:[], 4:[]}}>
             <div className='player-points-pitch_header'>
                 <div className='player-points-pitch_header-first-row cap'>
                     <InvisibleButton>
@@ -40,7 +41,7 @@ function PlayerPointsPitch() {
                             latest points
                         </p>
                         <p>
-                            70
+                            {userTeam.team.overall_points}
                         </p>
                         <span>
                             a
@@ -51,7 +52,7 @@ function PlayerPointsPitch() {
                             GW rank
                         </p>
                         <p>
-                            4564654
+                            {userTeam.team.overall_rank}
                         </p>
                     </div>
                     <div className='player-points-pitch_header-second-row-transfers'>

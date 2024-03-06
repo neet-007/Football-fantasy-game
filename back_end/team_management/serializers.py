@@ -7,7 +7,7 @@ from rest_framework.serializers import ModelSerializer, ValidationError, ListFie
 
 class TeamSerializer(ModelSerializer):
     user = UserModelSerializer(required=False)
-    favorite_team_pk = IntegerField(required=False, write_only=True)
+    favorite_team_pk = ListField(child=IntegerField() ,required=False, write_only=True)
     class Meta:
         model = Team
         fields = '__all__'
