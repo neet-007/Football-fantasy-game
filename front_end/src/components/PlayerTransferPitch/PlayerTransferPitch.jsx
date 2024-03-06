@@ -9,7 +9,7 @@ function PlayerTransferPitch({transferDetails, setTransferDetails, playersList, 
     function makeTransfers(){
     const {captins, ...other} = playersList
     const temp = Object.values(other)
-    console.log({team:{players_pks:temp.flatMap(({starter}) => [...starter]).map(x => [x.id, x.index]),
+    postTransfers({team:{players_pks:temp.flatMap(({starter}) => [...starter]).map(x => [x.id, x.index]),
     bench_order:temp.flatMap(({benched}) => [...benched]).sort((a,b) => a.bench_order - b.bench_order).map(x => [x.id, x.index]).reduce((acc, curr, index) => {
         acc[curr[0]] = [index, curr[1]]
         return acc

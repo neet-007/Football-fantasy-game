@@ -57,6 +57,7 @@ class GameWeekTeamViewSet(ModelViewSet):
         serialized_data = GameWeekTeamSerializer(data=request.data, context={'team_pk':team_pk[0]})
         if serialized_data.is_valid():
             serialized_data.save(**serialized_data.validated_data)
+            return Response({'success':'trasnfers made'}, status=status.HTTP_201_CREATED)
 
         return Response({'error':serialized_data.errors}, status=status.HTTP_400_BAD_REQUEST)
 

@@ -100,14 +100,13 @@ class GameWeekTeamManager(models.Manager):
                 if not captin or not vice_captin:
                     raise ValidationError('a team must have a captain and vice captain')
                 GameWeekPlayer.objects.bulk_create(players_objectes)
-                print('hhheeerrreee')
+
                 return game_week_team
         except:
             print_exc()
 
     def create_team_with_transfers(self, team_pk, starters:list[[]:int], bench_order:dict[int, []:int], captins:dict[str, int], transfers_dict:dict[int, list[int, int]]):
-        players_transfers = Player.objects.filter(models.Q(pk__in=[int(key) for key in transfers_dict.keys()]) | models.Q(pk__in=[l_s[1] for l_s in transfers_dict.values()]))
-        print([l_s[1] for l_s in transfers_dict.values()])
+        players_transfers = Player.objects.filter(models.Q(pk__in=[int(key) for key in transfers_dict.keys()]) | models.Q(pk__in=[l_s[0] for l_s in transfers_dict.values()]))
         if not len(players_transfers) == len(transfers_dict) * 2:
             raise ValidationError('some players are not the the database')
 
@@ -117,12 +116,15 @@ class GameWeekTeamManager(models.Manager):
             raise ValueError('no team with this pk')
 
         players_out = {}
+        players_in = []
         transfers_to_create = []
         for player in players_transfers:
-            if not player.pk in transfers_dict:
-                players_out [player.pk] = player
+            if not str(player.pk) in transfers_dict:
+                players_out [str(player.pk)] = player
                 continue
-            transfers_to_create.append(PlayerTransfer(team=team, player_in=player, player_out=players_out[transfers_dict[player.pk]], game_week=GAMEWEEK, cost=transfers_dict[player.pk][1]))
+            players_in.append(player)
+        for player in players_in:
+            transfers_to_create.append(PlayerTransfer(team=team, player_in=player, player_out=players_out[str(transfers_dict[str(player.pk)][0])], game_week=GAMEWEEK, points_cost=transfers_dict[str(player.pk)][1]))
 
         self.create(team_pk=team_pk, starters=starters, bench_order=bench_order, captins=captins)
 

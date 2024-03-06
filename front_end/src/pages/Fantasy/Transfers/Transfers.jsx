@@ -142,10 +142,10 @@ function Transferss({userTeam}) {
   const [wildCard, setWildCard] = useState(false)
   const [transferDetails, setTransferDetails] = useState({freeTransfers:userTeam.team.free_transfers, cost:0, moneyRemaining:parseFloat(userTeam.team.bank), playersTransferd:{}})
 
-  const playersIst = useMemo(() => {
+  const userTeamArr = useMemo(() => {
     const {captins, ...other} = playersList
-    return Object.values(other).flatMap(({starter, benched}) => [...starter, ...benched]).map(x => x.id)
-  })
+    return Object.values(other).flatMap(({starter, benched}) => [...starter, ...benched]).map(x => [x.id, x.index])
+  },[])
 
   const includedPlayers = useMemo(() => {
     const {captins, ...other} = playersList
@@ -182,10 +182,10 @@ function Transferss({userTeam}) {
       setTransferDetails(prev => (
         !Object.keys(prev.playersTransferd).find(x => x.includes(`-${index}`)) ?
         {...prev, ['moneyRemaining']:prev.moneyRemaining - player.price,
-                  ['cost']:prev.freeTransfers <= 0 ? prev.cost + 4 :prev.cost,
-                  ['freeTransfers']:playersIst.includes(player.id) ? prev.freeTransfers:prev.freeTransfers <= 0 ? 0 : prev.freeTransfers - 1,
+                  ['cost']: (wildCard || prev.freeTransfers > 0) ? prev.cost : prev.cost + 4 ,
+                  ['freeTransfers']:(wildCard || userTeamArr.find(x => x[0] === player.id)) ? prev.freeTransfers:prev.freeTransfers <= 0 ? 0 : prev.freeTransfers - 1,
                   ['playersTransferd']:{...prev.playersTransferd,
-                  [`${player.id}-${index}`]:[player.id, (wildCard || prev.freeTransfers > 0) ? 0 : 4]}
+                  [`${player.id}-${index}`]:[userTeamArr.find(x => x[1]===index)[0], (wildCard || prev.freeTransfers > 0) ? 0 : 4]}
                 }
         :
         {...prev, ['moneyRemaining']:prev.moneyRemaining - player.price,
@@ -194,7 +194,7 @@ function Transferss({userTeam}) {
                       acc[curr] = prev.playersTransferd[curr]
                     }
                     return acc
-                  },{[`${player.id}-${index}`]:[player.id, (wildCard || prev.freeTransfers > 0) ? 0 : 4]})
+                  },{[`${player.id}-${index}`]:[userTeamArr.find(x => x[1]===index)[0], (wildCard || prev.freeTransfers > 0) ? 0 : 4]})
                 }
       ));
     }
