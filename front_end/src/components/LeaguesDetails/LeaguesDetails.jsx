@@ -9,6 +9,7 @@ import Th from '../shared/Th/Th'
 import Tr from '../shared/Tr/Tr'
 import Td from '../shared/Td/Td'
 import InvisibleButton from '../shared/InvisibleButton/InvisibleButton'
+import { useNavigate } from 'react-router-dom'
 
 function LeagueTableRow({league}){
   return (
@@ -80,10 +81,12 @@ function LeagueTable({leagueName, leagues=[{leageu:'league', currentRank:2, last
 }
 
 function LeaguesDetails() {
+  const navigate = useNavigate()
   return (
     <section className='leagues-details_section'>
       <div className='league-details_buttons'>
-        <Button childern='' className={'d-flex align-items-center cap'} backgroundColor={'light'}>
+        <Button childern='' className={'d-flex align-items-center cap'} backgroundColor={'light'}
+        onClick={() => navigate('/fantasy/leagues-and-cups/create-league')}>
             <Plus size={20}/>
             <p>create & join leagues</p>
         </Button>

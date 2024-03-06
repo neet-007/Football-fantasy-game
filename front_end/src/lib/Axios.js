@@ -187,3 +187,21 @@ export async function postTransfers({team}){
         console.log(error)
     }
 }
+export async function postLeagueClassic({name, startingGameWeek}){
+    try {
+        let res = await axios.post('/api/league/league/', {name, starting_game_week:startingGameWeek}, config)
+        console.log(res.data)
+        return res.data
+    } catch (error) {
+        console.log(error)
+    }
+}
+export async function postLeagueH2H({name, startingGameWeek, isH2H, allowPostCreattionEntry}){
+    try {
+        let res = await axios.post('/api/league/league/', {name, starting_game_week:startingGameWeek, is_h2h:isH2H, allow_post_create_entry:allowPostCreattionEntry}, config)
+        console.log(res.data)
+        return res.data
+    } catch (error) {
+        console.log(error)
+    }
+}

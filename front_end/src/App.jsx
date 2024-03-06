@@ -21,6 +21,9 @@ const FantasyLayout = lazyLoad('../pages/Fantasy/FantasyLayout')
 const FantasyFixtures = lazyLoad('../pages/Fantasy/Fixtures/Fixtures')
 const FantasyHome = lazyLoad('../pages/Fantasy/Home/Home')
 const FantasyLeaguesAndCups = lazyLoad('../pages/Fantasy/LeaguesAndCups/LeaguesAndCups')
+const FanstayCreateLeague = lazyLoad('../pages/Fantasy/LeaguesAndCups/CreateLeague')
+const FanstayCreateLeagueClassic = lazyLoad('../pages/Fantasy/LeaguesAndCups/CreateLeagueClassic')
+const FanstayCreateLeagueH2H = lazyLoad('../pages/Fantasy/LeaguesAndCups/CreateLeagueH2H')
 const FantasyPickTeam = lazyLoad('../pages/Fantasy/PickTeam/PickTeam')
 const FantasyTeamSelection = lazyLoad('../pages/Fantasy/TeamSelection/TeamSelection')
 const FantasyPoints = lazyLoad('../pages/Fantasy/Points/Points')
@@ -46,6 +49,9 @@ function App() {
             <Route path='' element={<FantasyHome/>}/>
             <Route path='fixtures' element={<FantasyFixtures/>}/>
             <Route path='leagues-and-cups' element={<FantasyLeaguesAndCups/>}/>
+            <Route path='leagues-and-cups/create-league' element={<FanstayCreateLeague/>}/>
+            <Route path='leagues-and-cups/create-league/classic' element={<FanstayCreateLeagueClassic/>}/>
+            <Route path='leagues-and-cups/create-league/head-2-head' element={<FanstayCreateLeagueH2H/>}/>
             <Route path='points' element={<FantasyPoints/>}/>
             <Route path='stats' element={<FantasyStats/>}/>
             <Route path='injuries' element={<FanstayInjuries/>}/>
