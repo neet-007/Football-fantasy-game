@@ -1,6 +1,6 @@
 from .models import League, LeagueTeam, H2HLeagueTeam
 from rest_framework.serializers import ModelSerializer, ValidationError, IntegerField, SerializerMethodField
-
+ 
 class LeagueTeamSerializer(ModelSerializer):
     class Meta:
         model = LeagueTeam

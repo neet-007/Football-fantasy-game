@@ -22,13 +22,10 @@ class LeagueViewSet(ModelViewSet):
         except Team.DoesNotExist:
             return Response({'error':'player must have a team'}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = self.get_serializer_class()
-        leagues_pk = LeagueTeam.objects.filter(team=team).union(H2HLeagueTeam.objects.filter(team=team)).values_list('league', flat=True)
+        leagues_classic = LeagueTeam.objects.filter(team=team).values('league__name', 'position', 'last_position')
+        leagues_h2h = H2HLeagueTeam.objects.filter(team=team).values('league__name', 'position', 'last_position')
 
-        if not leagues_pk:
-            return Response(serializer(self.get_queryset().none).data, status=status.HTTP_200_OK)
-
-        return Response(serializer(self.get_queryset().filter(pk__in=leagues_pk), many=True).data, status=status.HTTP_200_OK)
+        return Response({'classic_leagues':leagues_classic, 'h2h_leagues':leagues_h2h}, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['put'])
     def join_league(self, request, pk=None):

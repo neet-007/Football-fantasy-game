@@ -187,6 +187,24 @@ export async function postTransfers({team}){
         console.log(error)
     }
 }
+export async function getUserLeagues(){
+    try {
+        let res = await axios.get('/api/league/league/user_leagues/')
+        console.log(res.data)
+        return res.data
+    } catch (error) {
+        console.log(error)
+    }
+}
+export async function getLeagueStandings({id}){
+    try {
+        let res = await axios.get(`/api/league/league/${id}/`)
+        console.log(res.data)
+        return res.data
+    } catch (error) {
+        console.log(error)
+    }
+}
 export async function postLeagueClassic({name, startingGameWeek}){
     try {
         let res = await axios.post('/api/league/league/', {name, starting_game_week:startingGameWeek}, config)

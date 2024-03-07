@@ -1,5 +1,5 @@
 import {useQuery, useMutation} from '@tanstack/react-query'
-import { checkUser, getInjuries, getPlayersFantasy, getPremierLeagueBaseTeams, getPremierLeagueTable, getStatsByCategory, getStatsDashBoard, getStatsFantasy, getTeamsFixtures, getTeamsResults, getUserTeam, login, logout, postLeagueClassic, postLeagueH2H, postTeam, postTeamCreation, postTransfers, register } from './axios'
+import { checkUser, getInjuries, getLeagueStandings, getPlayersFantasy, getPremierLeagueBaseTeams, getPremierLeagueTable, getStatsByCategory, getStatsDashBoard, getStatsFantasy, getTeamsFixtures, getTeamsResults, getUserLeagues, getUserTeam, login, logout, postLeagueClassic, postLeagueH2H, postTeam, postTeamCreation, postTransfers, register } from './axios'
 
 export function useRegister(){
     return useMutation({
@@ -111,6 +111,20 @@ export function usePostTeam(){
 export function usePostTransfers(){
     return useMutation({
         mutationFn: ({team}) => postTransfers({team})
+    })
+}
+
+export function useGetUserLeagues(){
+    return useQuery({
+        queryKey:['user-leagues'],
+        queryFn: getUserLeagues
+    })
+}
+
+export function useGetLeagueStandings({id}){
+    return useQuery({
+        queryKey:['league-standings', id],
+        queryFn:() => getLeagueStandings({id})
     })
 }
 

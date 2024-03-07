@@ -34,6 +34,7 @@ class LeagueManager(models.Manager):
 
                 teams_update = []
                 for i in range(len(teams)):
+                    teams[i].last_position = teams[i].position
                     teams[i].position = i
                     teams_update.append(teams[i])
 
@@ -55,6 +56,7 @@ class LeagueManager(models.Manager):
 
                 teams_update = []
                 for i in range(len(teams)):
+                    teams[i].last_position = teams[i].position
                     teams[i].position = i
                     teams_update.append(teams[i])
 
@@ -129,6 +131,7 @@ class League(models.Model):
 class LeagueTeam(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     league = models.ForeignKey(League, on_delete=models.CASCADE)
+    last_position = models.PositiveIntegerField(default=1, blank=True, validators=[MinValueValidator(1)])
     position = models.PositiveIntegerField(default=1, blank=True, validators=[MinValueValidator(1)])
     game_week_points = models.IntegerField(default=0, db_index=True, blank=True)
     overall_points = models.IntegerField(default=0, blank=True)
@@ -152,6 +155,7 @@ class LeagueTeam(models.Model):
 class H2HLeagueTeam(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     league = models.ForeignKey(League, on_delete=models.CASCADE)
+    last_position = models.PositiveBigIntegerField(default=1, blank=True, validators=[MinValueValidator(1)])
     position = models.PositiveIntegerField(default=1, blank=True, validators=[MinValueValidator(1)])
     games_played = models.PositiveIntegerField(default=0, blank=True)
     wins = models.PositiveIntegerField(default=0, db_index=True, blank=True)

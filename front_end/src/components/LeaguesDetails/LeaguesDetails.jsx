@@ -10,36 +10,37 @@ import Tr from '../shared/Tr/Tr'
 import Td from '../shared/Td/Td'
 import InvisibleButton from '../shared/InvisibleButton/InvisibleButton'
 import { useNavigate } from 'react-router-dom'
+import { useGetUserLeagues } from '../../lib/queriesAndMutaions'
 
 function LeagueTableRow({league}){
   return (
     <Tr className='leagues-details_league-table-tr'>
           <Td className='league-details_league-table-header-league'>
             <p className='cursor-pointer'>
-              {league.leageu}
+              {league.league__name}
             </p>
-            {league.change === 'up' &&
+            {league.position > league.last_position &&
                 <span className='league-details_league-table-header-league-icon'>
                   <ChevronUp color='#9600ff'/>
                 </span>
             }
-            {league.change === 'down' &&
+            {league.position < league.last_position &&
                <span className='league-details_league-table-header-league-icon'>
                   <ChevronDown color='#9600ff'/>
                </span>
             }
-            {league.change === 'none' &&
+            {league.position === league.last_position &&
                <span className='league-details_league-table-header-league-icon-gray'>
 
                </span>
             }
           </Td>
           <Td className='league-details_league-table-header-current'>
-            {league.currentRank}
+            {league.position}
           </Td>
           <Td className='league-details_league-table-header-last'>
             <p>
-              {league.lastRank}
+              {league.last_position}
             </p>
             <span className='d-flex align-items-center justify-content-center cursor-pointer'>
               <GearFill/>
@@ -49,30 +50,37 @@ function LeagueTableRow({league}){
   )
 }
 
-function LeagueTable({leagueName, leagues=[{leageu:'league', currentRank:2, lastRank:4, change:'none'}, {leageu:'league2', currentRank:2, lastRank:4, change:'down'}, {leageu:'league3', currentRank:2, lastRank:4, change:'up'}]}){
+function LeagueTable({leagueName, leagues=[]}){
   return (
     <article>
     <SectionHeader>{leagueName}</SectionHeader>
     <table className='leagues-details_league-table-table cap'>
-      <Thead className={'league-details_league-table-header'}>
-        <Tr>
+      <Thead>
+        <Tr className='league-details_league-table-header'>
           <Th className='league-details_league-table-header-league'>
             league
           </Th>
-        <Th className='league-details_league-table-header-current'>
-          current rank
-        </Th>
-        <Th className='league-details_league-table-header-last'>
-          last rank
-        </Th>
+          <Th>
+
+          </Th>
+          <Th className='league-details_league-table-header-current'>
+            current rank
+          </Th>
+          <Th className='league-details_league-table-header-last'>
+            last rank
+          </Th>
         </Tr>
       </Thead>
       <Tbody className={'d-flex f-di-column gap-1'}>
         {(!leagues || leagues.length === 0) ?
+        <Tr>
+        <Td>
         <p>no {leagueName} joined yet, <InvisibleButton>craete and join leagues now</InvisibleButton></p>
+        </Td>
+        </Tr>
         :
         leagues.map(league => {
-          return <LeagueTableRow key={`league-${league.leageu}`} league={league}/>
+          return <LeagueTableRow key={`league-${league.league__name}`} league={league}/>
         })}
       </Tbody>
     </table>
@@ -81,7 +89,10 @@ function LeagueTable({leagueName, leagues=[{leageu:'league', currentRank:2, last
 }
 
 function LeaguesDetails() {
+  const {data, isLoading} = useGetUserLeagues()
   const navigate = useNavigate()
+
+  if(isLoading) return null
   return (
     <section className='leagues-details_section'>
       <div className='league-details_buttons'>
@@ -96,8 +107,8 @@ function LeaguesDetails() {
             <p></p>
         </Button>
       </div>
-      <LeagueTable leagueName={'Invitational Classic Leagues'}/>
-      <LeagueTable leagueName={'Invitational Head-to-Head Leagues'}/>
+      <LeagueTable leagueName={'Invitational Classic Leagues'} leagues={data?.classic_leagues}/>
+      <LeagueTable leagueName={'Invitational Head-to-Head Leagues'} leagues={data?.h2h_leagues}/>
       <LeagueTable leagueName={'Public Classic Leagues'}/>
       <LeagueTable leagueName={'Public Head-to-Head Leagues'}/>
       <LeagueTable leagueName={'General Leagues'}/>
